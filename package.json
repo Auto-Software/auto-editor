@@ -1,0 +1,32 @@
+{
+  "name": "auto-editor",
+  "version": "1.0.0",
+  "description": "web-based coed editor",
+  "keywords": [
+    "code-editor",
+    "editor"
+  ],
+  "homepage": "https://github.com/Auto-Software/auto-editor#readme",
+  "bugs": {
+    "url": "https://github.com/Auto-Software/auto-editor/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Auto-Software/auto-editor.git"
+  },
+  "license": "MIT",
+  "author": "Auto Software",
+  "type": "module",
+  "main": "dist/src/editor.js",
+  "scripts": {
+    "start": "npm-run-all -p typescript sass",
+    "typescript" : "tsc --watch",
+    "sass" : "sass --watch src/browser/scss/global.scss:./src/browser/css/global.css"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "npm-run-all2": "^8.0.4"
+  }
+}
