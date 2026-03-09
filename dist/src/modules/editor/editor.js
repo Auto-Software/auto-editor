@@ -1,27 +1,31 @@
 // CONSTRUCTOR : 
-import { langPreset } from "../lang-preset/lang-preset.js";
+import { tokenLoader } from "../token-loader/token-loader.js";
 import { closeOpen } from "../open-close/open-close.js";
 import { rowEngine } from "../row-engine/row-engine.js";
-import { javascriptTokenTree } from "../token-lang/js-token.js";
+import { themeLoader } from "../theme/theme-loader.js";
 export class Editor {
     editorBody;
     editorWritableContainer;
-    editorGutterContainer;
     editorViewport;
-    editorTrueTextarea;
     editorRowContainer;
+    editorTrueTextarea;
+    editorGutterContainer;
     container;
     tabSize;
     tokenTree;
     langPreset;
     width;
     height;
+    themePreset;
+    editorRow;
     constructor(option) {
         this.container = option?.container;
         this.tabSize = option?.tabSize || 4;
-        this.tokenTree = option?.tokenTree || javascriptTokenTree;
         this.width = option?.width || "100%";
         this.height = option?.height || "100%";
+        this.editorRow = [];
+        this.tokenTree = option?.tokenTree || tokenLoader("javascript");
+        this.themePreset = option?.themePreset || themeLoader("monaco");
         this.editorBody = document.createElement("div");
         this.editorBody.classList.add("editor-container");
         this.editorWritableContainer = document.createElement("div");
@@ -50,7 +54,7 @@ export class Editor {
         else {
             const selectedPreset = option.langPreset || "javascript";
             this.langPreset = selectedPreset;
-            treeToLoad = langPreset(selectedPreset);
+            treeToLoad = tokenLoader(selectedPreset);
         }
         ;
         this.editorBody.style.width = "100%";
@@ -64,18 +68,27 @@ export class Editor {
         if (this.height === "full")
             this.editorBody.style.height = "100%";
         this.loadEditor(treeToLoad);
+        this.loadTheme(this.themePreset);
     }
     ;
+    loadTheme = (theme) => {
+        this.editorViewport.style.background = theme.background;
+        this.editorGutterContainer.style.background = theme.background;
+        this.editorBody.style.background = theme.background;
+    };
     loadEditor = (tTree) => {
+        // TOKEN SET : 
         this.tokenTree = tTree;
-        rowEngine(" ", this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
+        rowEngine(this, " ", this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
         this.editorTrueTextarea.addEventListener('input', () => {
-            rowEngine(this.editorTrueTextarea.value, this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
+            rowEngine(this, this.editorTrueTextarea.value, this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
         });
+        // TAB SIZE SET : 
         let calculatedTabSize = "";
         for (let i = 0; i < this.tabSize; i++)
             calculatedTabSize += " ";
         this.editorTrueTextarea.style.tabSize = this.tabSize.toString();
+        // AUTO CLOSE CHAR : 
         this.editorTrueTextarea.addEventListener('keydown', (e) => {
             if (closeOpen(e, this))
                 return;
@@ -94,7 +107,7 @@ export class Editor {
                     document.execCommand('insertText', false, middleContent);
                     const newPos = this.editorTrueTextarea.selectionStart - 2;
                     this.editorTrueTextarea.setSelectionRange(newPos, newPos);
-                    rowEngine(this.editorTrueTextarea.value, this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
+                    rowEngine(this, this.editorTrueTextarea.value, this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
                     return;
                 }
             }

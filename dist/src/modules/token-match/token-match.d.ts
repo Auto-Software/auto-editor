@@ -1,6 +1,9 @@
+export type TokenRole = "own" | "ownleft" | "ownright" | "ownscope";
 export interface tokenTreeOption {
     token: (string[] | string | RegExp);
     color: string;
+    replace?: string;
+    role?: TokenRole;
 }
 export interface TokenPart {
     text: string;

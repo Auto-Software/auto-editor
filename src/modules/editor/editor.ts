@@ -1,10 +1,11 @@
 
 // CONSTRUCTOR : 
 
-import { langPreset, LangPresetOption } from "../lang-preset/lang-preset.js";
+import { tokenLoader, LangPresetOption } from "../token-loader/token-loader.js";
 import { closeOpen } from "../open-close/open-close.js";
 import { rowEngine } from "../row-engine/row-engine.js";
-import { javascriptTokenTree } from "../token-lang/js-token.js";
+import { themeLoader } from "../theme/theme-loader.js";
+import { javascriptTokenTree } from "../token-loader/editor-token/js-token.js";
 import { tokenTreeOption } from "../token-match/token-match.js";
 
 interface EditorOption {
@@ -13,32 +14,44 @@ interface EditorOption {
     tokenTree? : tokenTreeOption[],
     langPreset? : LangPresetOption,
     width? : string ,
-    height? : string 
+    height? : string ,
+    themePreset? : themeType;
+}
+
+interface EditorRowOption {
+    row : HTMLDivElement,
+    gutter : HTMLDivElement
 }
 
 export class Editor {
 
     private editorBody: HTMLDivElement;
     private editorWritableContainer: HTMLDivElement;
-    public editorGutterContainer: HTMLDivElement;
     private editorViewport: HTMLDivElement;
-    public editorTrueTextarea: HTMLTextAreaElement;
+    
     public editorRowContainer: HTMLDivElement;
-
+    public editorTrueTextarea: HTMLTextAreaElement;
+    public editorGutterContainer: HTMLDivElement;
     public container: HTMLDivElement | HTMLBodyElement;
     public tabSize: number;
     public tokenTree : tokenTreeOption[];
     public langPreset : LangPresetOption;
     public width : string;
     public height : string;
+    public themePreset : themeType;
+
+    private editorRow : EditorRowOption[];
 
     constructor(option: EditorOption) {
 
         this.container = option?.container;
         this.tabSize = option?.tabSize || 4;
-        this.tokenTree = option?.tokenTree || javascriptTokenTree;
         this.width = option?.width || "100%";
         this.height = option?.height || "100%";
+        this.editorRow = [];
+
+        this.tokenTree = option?.tokenTree || tokenLoader("javascript");
+        this.themePreset = option?.themePreset || themeLoader("monaco");
 
         this.editorBody = document.createElement("div");
         this.editorBody.classList.add("editor-container");
@@ -77,7 +90,7 @@ export class Editor {
         } else {
             const selectedPreset = option.langPreset || "javascript";
             this.langPreset = selectedPreset;
-            treeToLoad = langPreset(selectedPreset);
+            treeToLoad = tokenLoader(selectedPreset);
         };
 
         this.editorBody.style.width = "100%";
@@ -85,28 +98,44 @@ export class Editor {
 
         if(this.width && this.width != "full") this.editorBody.style.width = this.width;
         if(this.height && this.width != "full") this.editorBody.style.height = this.height;
+
         if(this.width === "full") this.editorBody.style.width = "100%";
         if(this.height === "full") this.editorBody.style.height = "100%";
 
         this.loadEditor(treeToLoad);
+        this.loadTheme(this.themePreset);
+
+    };
+
+    private loadTheme = (theme : themeType): void => {
+
+        this.editorViewport.style.background = theme.background;
+        this.editorGutterContainer.style.background = theme.background;
+        this.editorBody.style.background = theme.background;
 
     };
 
     private loadEditor = (tTree : tokenTreeOption[]): void => {
 
+        // TOKEN SET : 
+
         this.tokenTree = tTree;
 
-        rowEngine(" ", this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
+        rowEngine(this," ", this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
 
         this.editorTrueTextarea.addEventListener('input', () => {
-            rowEngine(this.editorTrueTextarea.value, this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
+            rowEngine(this,this.editorTrueTextarea.value, this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
         });
+
+        // TAB SIZE SET : 
 
         let calculatedTabSize = "";
 
         for (let i = 0; i < this.tabSize; i++) calculatedTabSize += " ";
         
         this.editorTrueTextarea.style.tabSize = this.tabSize.toString();
+
+        // AUTO CLOSE CHAR : 
 
         this.editorTrueTextarea.addEventListener('keydown', (e: KeyboardEvent) => {
             
@@ -136,10 +165,11 @@ export class Editor {
                     const newPos = this.editorTrueTextarea.selectionStart - 2;
                     this.editorTrueTextarea.setSelectionRange(newPos, newPos);
 
-                    rowEngine(this.editorTrueTextarea.value, this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
+                    rowEngine(this,this.editorTrueTextarea.value, this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
                     return;
                 }
             }
         });
+        
     }
 }

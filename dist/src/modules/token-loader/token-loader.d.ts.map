@@ -1,0 +1,1 @@
+{"version":3,"file":"token-loader.d.ts","sourceRoot":"","sources":["../../../../src/modules/token-loader/token-loader.ts"],"names":[],"mappings":"AAMA,OAAO,EAAE,eAAe,EAAE,MAAM,+BAA+B,CAAC;AAEhE,MAAM,MAAM,gBAAgB,GAAG,YAAY,GAAG,QAAQ,GAAG,WAAW,GAAG,QAAQ,GAAG,MAAM,GAAG,KAAK,CAAC;AAEjG,eAAO,MAAM,WAAW,GAAI,QAAS,gBAAgB,KAAG,eAAe,EAQtE,CAAC"}

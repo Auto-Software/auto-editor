@@ -1,12 +1,13 @@
-
 // auto software - auto editor - (c) 2026 
-// under MIT lincese 
+// under MIT license 
 
-// TOKEN MATCH :
+export type TokenRole = "own" | "ownleft" | "ownright" | "ownscope";
 
 export interface tokenTreeOption {
     token: (string[] | string | RegExp);
-    color: string; 
+    color: string;
+    replace?: string; 
+    role?: TokenRole; 
 }
 
 export interface TokenPart {
@@ -16,7 +17,6 @@ export interface TokenPart {
 }
 
 export const tokenMatch = (tokenTree: tokenTreeOption[], text: string): TokenPart[] => {
-    
     let parts: TokenPart[] = [{ text: text, isToken: false }];
 
     tokenTree.forEach(item => {
@@ -28,7 +28,7 @@ export const tokenMatch = (tokenTree: tokenTreeOption[], text: string): TokenPar
         } else {
             const tokens = Array.isArray(item.token) ? item.token : [item.token];
             const escaped = tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-            regex = new RegExp(`(${escaped})`, 'g'); // Sem \b para pegar símbolos
+            regex = new RegExp(`(${escaped})`, 'g');
         }
 
         parts.forEach(part => {
@@ -39,13 +39,72 @@ export const tokenMatch = (tokenTree: tokenTreeOption[], text: string): TokenPar
 
             let lastIndex = 0;
             let m;
+
             while ((m = regex.exec(part.text)) !== null) {
-                if (m.index > lastIndex) {
-                    newParts.push({ text: part.text.substring(lastIndex, m.index), isToken: false });
+                const matchText = m[0];
+                const matchIndex = m.index;
+
+                // 1. role="own": Linha toda
+                if (item.role === "own") {
+                    newParts = [{ text: part.text, isToken: true, color: item.color }];
+                    lastIndex = part.text.length;
+                    break;
                 }
-                newParts.push({ text: m[0], isToken: true, color: item.color });
+
+                // 2. role="ownleft": Tudo à esquerda
+                if (item.role === "ownleft") {
+                    newParts = [{ text: part.text.substring(0, regex.lastIndex), isToken: true, color: item.color }];
+                    lastIndex = regex.lastIndex;
+                    if (lastIndex < part.text.length) {
+                        newParts.push({ text: part.text.substring(lastIndex), isToken: false });
+                    }
+                    lastIndex = part.text.length;
+                    break;
+                }
+
+                // 3. role="ownright": Tudo à direita
+                if (item.role === "ownright") {
+                    if (matchIndex > lastIndex) {
+                        newParts.push({ text: part.text.substring(lastIndex, matchIndex), isToken: false });
+                    }
+                    newParts.push({ text: part.text.substring(matchIndex), isToken: true, color: item.color });
+                    lastIndex = part.text.length;
+                    break;
+                }
+
+                // 4. role="ownscope": Colore o conteúdo capturado (ex: entre aspas ou chaves)
+                if (item.role === "ownscope") {
+                    if (matchIndex > lastIndex) {
+                        newParts.push({ text: part.text.substring(lastIndex, matchIndex), isToken: false });
+                    }
+                    
+                    // Se houver grupo de captura m[1], usamos ele, senão o m[0]
+                    const scopeText = m[1] !== undefined ? m[1] : matchText;
+                    
+                    newParts.push({ 
+                        text: item.replace || scopeText, 
+                        isToken: true, 
+                        color: item.color 
+                    });
+                    
+                    lastIndex = regex.lastIndex;
+                    continue; 
+                }
+
+                // Padrão (Sem role ou role não identificado)
+                if (matchIndex > lastIndex) {
+                    newParts.push({ text: part.text.substring(lastIndex, matchIndex), isToken: false });
+                }
+
+                newParts.push({ 
+                    text: item.replace || matchText,
+                    isToken: true, 
+                    color: item.color 
+                });
+
                 lastIndex = regex.lastIndex;
             }
+
             if (lastIndex < part.text.length) {
                 newParts.push({ text: part.text.substring(lastIndex), isToken: false });
             }
@@ -53,5 +112,5 @@ export const tokenMatch = (tokenTree: tokenTreeOption[], text: string): TokenPar
         parts = newParts;
     });
 
-    return parts; // Retorna o objeto puro, como o CodeMirror faz internamente
+    return parts;
 };

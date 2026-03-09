@@ -1,14 +1,14 @@
 
 // LANG PRESET : 
 
-import { gmlTokenTree } from "../token-lang/gml-token.js";
-import { javascriptTokenTree } from "../token-lang/js-token.js";
-import { rustTokenTree } from "../token-lang/rust-token.js";
+import { gmlTokenTree } from "./editor-token/gml-token.js";
+import { javascriptTokenTree } from "./editor-token/js-token.js";
+import { rustTokenTree } from "./editor-token/rust-token.js";
 import { tokenTreeOption } from "../token-match/token-match.js";
 
 export type LangPresetOption = "javascript" | "golang" | "cplusplus" | "csharp" | "rust" | "gml";
 
-export const langPreset = (preset : LangPresetOption): tokenTreeOption[] => {
+export const tokenLoader = (preset : LangPresetOption): tokenTreeOption[] => {
 
     if(preset === "javascript") return javascriptTokenTree;
     if(preset === "rust") return rustTokenTree;
@@ -16,4 +16,4 @@ export const langPreset = (preset : LangPresetOption): tokenTreeOption[] => {
 
     return javascriptTokenTree;
 
-}
+};
