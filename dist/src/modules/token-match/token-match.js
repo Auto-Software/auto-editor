@@ -1,42 +1,23 @@
-
 // auto software - auto editor - (c) 2026 
 // under MIT lincese 
-
-// TOKEN MATCH :
-
-export interface tokenTreeOption {
-    token: (string[] | string | RegExp);
-    color: string; 
-}
-
-export interface TokenPart {
-    text: string;
-    isToken: boolean;
-    color?: string;
-}
-
-export const tokenMatch = (tokenTree: tokenTreeOption[], text: string): TokenPart[] => {
-    
-    let parts: TokenPart[] = [{ text: text, isToken: false }];
-
+export const tokenMatch = (tokenTree, text) => {
+    let parts = [{ text: text, isToken: false }];
     tokenTree.forEach(item => {
-        let newParts: TokenPart[] = [];
-        let regex: RegExp;
-        
+        let newParts = [];
+        let regex;
         if (item.token instanceof RegExp) {
             regex = new RegExp(item.token.source, item.token.flags.includes('g') ? item.token.flags : item.token.flags + 'g');
-        } else {
+        }
+        else {
             const tokens = Array.isArray(item.token) ? item.token : [item.token];
             const escaped = tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
             regex = new RegExp(`(${escaped})`, 'g'); // Sem \b para pegar símbolos
         }
-
         parts.forEach(part => {
             if (part.isToken) {
                 newParts.push(part);
                 return;
             }
-
             let lastIndex = 0;
             let m;
             while ((m = regex.exec(part.text)) !== null) {
@@ -52,6 +33,6 @@ export const tokenMatch = (tokenTree: tokenTreeOption[], text: string): TokenPar
         });
         parts = newParts;
     });
-
     return parts; // Retorna o objeto puro, como o CodeMirror faz internamente
 };
+//# sourceMappingURL=token-match.js.map

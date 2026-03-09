@@ -10,7 +10,10 @@
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 		"noEmitOnError": true,
-		"sourceMap": true
+		"sourceMap": true,
+        "declaration": true,         
+        "declarationMap": true,       
+        "emitDeclarationOnly": false,
 	},
 	"include": ["src"],
     "exclude": ["dist"]

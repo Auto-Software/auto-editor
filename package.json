@@ -17,7 +17,7 @@
   "license": "MIT",
   "author": "Auto Software",
   "type": "module",
-  "main": "dist/src/editor.js",
+  "main": "dist/src/modules/editor/editor.js",
   "scripts": {
     "start": "npm-run-all -p typescript sass",
     "typescript" : "tsc --watch",
