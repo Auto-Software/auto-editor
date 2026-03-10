@@ -1,15 +1,13 @@
+// EDITOR : 
 import { tokenLoader } from "../token-loader/token-loader.js";
 import { closeOpen } from "../open-close/open-close.js";
 import { rowEngine } from "../row-engine/row-engine.js";
 import { themeLoader } from "../theme/theme-loader.js";
 export class Editor {
     editorBody;
-    editorWritableContainer;
-    editorViewport;
     editorAutoHeightContainer;
-    editorRowContainer;
+    editorOverlay;
     editorTrueTextarea;
-    editorGutterContainer;
     container;
     tabSize;
     tokenTree;
@@ -26,25 +24,17 @@ export class Editor {
         this.themePreset = option?.themePreset || themeLoader("monaco");
         this.editorBody = document.createElement("div");
         this.editorBody.classList.add("editor-container");
-        this.editorWritableContainer = document.createElement("div");
-        this.editorWritableContainer.classList.add("writable-container");
-        this.editorGutterContainer = document.createElement("div");
-        this.editorGutterContainer.classList.add("editor-gutter");
-        this.editorViewport = document.createElement("div");
-        this.editorViewport.classList.add("editor-viewport");
+        this.editorOverlay = document.createElement("div");
+        this.editorOverlay.classList.add("editor-overlay");
         this.editorTrueTextarea = document.createElement("textarea");
         this.editorTrueTextarea.classList.add("editor-true-writable-area");
         this.editorTrueTextarea.spellcheck = false;
-        this.editorRowContainer = document.createElement("div");
-        this.editorRowContainer.classList.add("editor-row-container");
+        this.editorTrueTextarea.value = "  ";
         this.editorAutoHeightContainer = document.createElement("div");
         this.editorAutoHeightContainer.classList.add("editor-auto-height-container");
-        this.editorViewport.appendChild(this.editorAutoHeightContainer);
-        this.editorAutoHeightContainer.appendChild(this.editorTrueTextarea);
-        this.editorAutoHeightContainer.appendChild(this.editorRowContainer);
-        this.editorWritableContainer.appendChild(this.editorGutterContainer);
-        this.editorWritableContainer.appendChild(this.editorViewport);
-        this.editorBody.appendChild(this.editorWritableContainer);
+        this.editorOverlay.appendChild(this.editorTrueTextarea);
+        this.editorBody.appendChild(this.editorAutoHeightContainer);
+        this.editorBody.appendChild(this.editorOverlay);
         if (this.container instanceof HTMLElement)
             this.container.appendChild(this.editorBody);
         let treeToLoad;
@@ -70,36 +60,32 @@ export class Editor {
             this.editorBody.style.height = "100%";
         this.loadEditor(treeToLoad);
         this.loadTheme(this.themePreset);
-        this.initScrollBar(); // Ativa a sincronização
+        // this.initScrollBar(); // Ativa a sincronização
     }
     ;
     loadTheme = (theme) => {
-        this.editorViewport.style.background = theme.background;
-        this.editorGutterContainer.style.background = theme.background;
         this.editorBody.style.background = theme.background;
     };
-    // SINCRONIZAÇÃO DE SCROLL
-    initScrollBar = () => {
-        const viewport = this.editorViewport;
-        const gutter = this.editorGutterContainer;
-        const textarea = this.editorTrueTextarea;
-        const syncLayout = () => {
-            const { scrollTop, scrollLeft } = viewport;
-            // O Gutter acompanha o vertical
-            gutter.style.transform = `translateY(${-scrollTop}px)`;
-            // Sincroniza a posição do texto invisível no textarea para o cursor bater
-            textarea.scrollLeft = scrollLeft;
-            textarea.scrollTop = scrollTop;
-        };
-        viewport.addEventListener('scroll', syncLayout, { passive: true });
-        // Opcional: Se houver mudança dinâmica, apenas chame o sync
-        new ResizeObserver(syncLayout).observe(this.editorRowContainer);
-    };
+    // private initScrollBar = (): void => {
+    //     const viewport = this.editorViewport;
+    //     const gutter = this.editorGutterContainer;
+    //     const textarea = this.editorTrueTextarea;
+    //     const syncLayout = () => {
+    //         const scrollTop = viewport.scrollTop;
+    //         const scrollLeft = viewport.scrollLeft;
+    //         // move o gutter junto
+    //         gutter.style.marginTop = `-${scrollTop}px`;
+    //         // sincroniza textarea
+    //         textarea.scrollTop = scrollTop;
+    //         textarea.scrollLeft = scrollLeft;
+    //     };
+    //     viewport.addEventListener("scroll", syncLayout, { passive: true });
+    // };
     loadEditor = (tTree) => {
         this.tokenTree = tTree;
-        rowEngine(this, " ", this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
+        rowEngine(this);
         this.editorTrueTextarea.addEventListener('input', () => {
-            rowEngine(this, this.editorTrueTextarea.value, this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
+            rowEngine(this);
         });
         let calculatedTabSize = "";
         for (let i = 0; i < this.tabSize; i++)
@@ -123,7 +109,7 @@ export class Editor {
                     document.execCommand('insertText', false, middleContent);
                     const newPos = this.editorTrueTextarea.selectionStart - 2;
                     this.editorTrueTextarea.setSelectionRange(newPos, newPos);
-                    rowEngine(this, this.editorTrueTextarea.value, this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
+                    rowEngine(this);
                     return;
                 }
             }

@@ -25,7 +25,7 @@ export const closeOpen = (e, editor) => {
         document.execCommand('insertText', false, openChar + closeChar);
         const selectionPos = editor.editorTrueTextarea.selectionStart;
         editor.editorTrueTextarea.setSelectionRange(selectionPos - 1, selectionPos - 1);
-        rowEngine(editor, editor.editorTrueTextarea.value, editor.tokenTree, editor.editorGutterContainer, editor.editorRowContainer);
+        rowEngine(editor);
         return true;
     }
     return false;

@@ -28,6 +28,7 @@ export const closeOpen = (e: KeyboardEvent, editor: Editor): boolean => {
     }
 
     if (pairs[e.key]) {
+        
         e.preventDefault();
 
         const openChar = e.key;
@@ -38,7 +39,7 @@ export const closeOpen = (e: KeyboardEvent, editor: Editor): boolean => {
         const selectionPos = editor.editorTrueTextarea.selectionStart;
         editor.editorTrueTextarea.setSelectionRange(selectionPos - 1, selectionPos - 1);
         
-        rowEngine(editor,editor.editorTrueTextarea.value, editor.tokenTree, editor.editorGutterContainer, editor.editorRowContainer);
+        rowEngine(editor);
         
         return true; 
     }

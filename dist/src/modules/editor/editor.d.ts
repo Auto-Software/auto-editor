@@ -11,12 +11,9 @@ interface EditorOption {
 }
 export declare class Editor {
     private editorBody;
-    private editorWritableContainer;
-    private editorViewport;
-    private editorAutoHeightContainer;
-    editorRowContainer: HTMLDivElement;
+    editorAutoHeightContainer: HTMLDivElement;
+    private editorOverlay;
     editorTrueTextarea: HTMLTextAreaElement;
-    editorGutterContainer: HTMLDivElement;
     container: HTMLDivElement | HTMLBodyElement;
     tabSize: number;
     tokenTree: tokenTreeOption[];
@@ -26,7 +23,6 @@ export declare class Editor {
     themePreset: themeType;
     constructor(option: EditorOption);
     private loadTheme;
-    private initScrollBar;
     private loadEditor;
 }
 export {};

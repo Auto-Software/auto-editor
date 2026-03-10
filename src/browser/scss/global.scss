@@ -1,11 +1,8 @@
+
+// GLOBAL : 
+
 @import "./var.scss";
 
-body {
-    margin: 0px;
-    padding: 0px;
-}
-
-// 1. Container Principal
 .editor-container {
     position: absolute;
     width: 100%;
@@ -13,11 +10,10 @@ body {
     box-sizing: border-box;
     background: #2e2e2e;
     display: flex;
-    flex-direction: column; // Layout vertical principal
-    overflow: hidden;
+    flex-direction: column; 
+    overflow: auto;
 }
 
-// Estilos de Fonte (Shared)
 %font-lock {
     font-family: $editor-font !important;
     font-size: $editor-font-size;
@@ -29,31 +25,6 @@ body {
     -webkit-font-smoothing: antialiased; 
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeSpeed;
-}
-
-// 2. Writable Container (Gutter + Viewport)
-.writable-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: row; // Gutter à esquerda, Viewport à direita
-    overflow: hidden;
-}
-
-// 3. Gutter (Números de linha)
-.editor-gutter {
-    position: relative;
-    width: auto;
-    height: 100%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    user-select: none;
-    -webkit-user-drag: none;
-    z-index: 20;
-    background: #2e2e2e;
 }
 
 .gutter {
@@ -72,33 +43,22 @@ body {
     z-index: 10;
 }
 
-// 4. Viewport (Onde o Scroll acontece)
-.editor-viewport {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    overflow: auto; // Scroll nativo ativado aqui
-    z-index: 10;
-    display: block; // Importante para não conflitar com max-content interno
-}
-
-// 5. O Coração do Layout: Auto Height & Width
 .editor-auto-height-container {
     position: relative;
-    width: max-content; // Estica horizontalmente conforme o conteúdo das rows
-    min-width: 100%;    // Garante que o fundo cubra pelo menos o viewport todo
+    width: max-content; 
+    min-width: 100%;  
     height: auto;
     box-sizing: border-box;
+
+    border: 1px solid red;
 }
 
-// 6. Textarea (Capa Invisível que recebe input)
 .editor-true-writable-area {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;  // Agora 100% significa a largura total do auto-height (max-content)
-    height: 100%; // Cobre todas as linhas verticalmente
+    width: 100%;  
+    height: 100%;
     z-index: 1000;
     outline: none;
     background: none;
@@ -107,31 +67,33 @@ body {
     color: transparent; 
     border: none;
     caret-color: white;
-    padding: 0px 0px 0px 5px; // Alinhado com o padding da row
+    padding: 0px 0px 0px 5px; 
     margin: 0px;
     line-height: $editor-row-height; 
     tab-size: 4;
     white-space: pre;
-    overflow: hidden; // O scroll é feito pelo viewport pai
+    overflow: hidden; 
 }
 
-// 7. Container das Linhas Coloridas
-.editor-row-container {
+.editor-super-row{
     position: relative;
-    width: 100%;
-    height: auto;
+    width: auto; 
+    height: $editor-row-height;
+    box-sizing: border-box;
     display: flex;
-    flex-direction: column;
-    z-index: 1;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row; 
 }
 
 .editor-row {
     position: relative;
-    width: auto; // Removido min-width: 100vw que causava o erro
+    width: auto; 
+    min-width: 100vw;
     height: $editor-row-height;
     box-sizing: border-box;
     display: block; 
-    padding: 0 20px 0 5px; // Respiro na direita para não colar na borda
+    padding: 0 20px 0 5px; 
     white-space: pre; 
     @extend %font-lock;
     border-top: 1px solid transparent;
@@ -143,4 +105,15 @@ body {
     position: relative;
     @extend %font-lock;
     font-weight: initial;
+}
+
+.editor-overlay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+
+    border: 2px solid green;
 }

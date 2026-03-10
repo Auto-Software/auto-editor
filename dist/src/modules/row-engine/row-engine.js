@@ -1,37 +1,30 @@
 // auto software - auto editor - (c) 2026 
 // under MIT license 
 import { tokenMatch } from "../token-match/token-match.js";
-const getLineFromPos = (text, pos) => {
-    return text.substring(0, pos).split('\n').length;
-};
-export const rowEngine = (editor, text, tokenTree, gutterCon, rowCon) => {
-    const lines = text.split('\n');
-    gutterCon.innerHTML = "";
-    rowCon.innerHTML = "";
+const getLineFromPos = (text, pos) => text.substring(0, pos).split('\n').length;
+export const rowEngine = (editor) => {
+    const lines = editor.editorTrueTextarea.value.split('\n');
+    editor.editorAutoHeightContainer.innerHTML = "";
     const lineElements = [];
     lines.forEach((lineText, index) => {
-        const gutterContainer = document.createElement('div');
-        gutterContainer.className = 'gutter';
-        gutterContainer.style.background = editor.themePreset.gutterBackground;
-        const gutterLabel = document.createElement('span');
-        gutterLabel.className = 'gutter-label';
-        gutterLabel.style.color = editor.themePreset.gutterColor;
-        gutterLabel.textContent = (index + 1).toString().padStart(2, '0');
-        gutterContainer.appendChild(gutterLabel);
-        gutterCon.appendChild(gutterContainer);
+        const editorSuperRow = document.createElement("div");
+        editorSuperRow.classList.add("editor-super-row");
+        const editorGutter = document.createElement('div');
+        editorGutter.className = 'gutter';
+        editorGutter.style.background = editor.themePreset.gutterBackground;
+        const editorGutterNumber = document.createElement('span');
+        editorGutterNumber.className = 'gutter-label';
+        editorGutterNumber.style.color = editor.themePreset.gutterColor;
+        editorGutterNumber.textContent = (index + 1).toString().padStart(2, '0');
+        editorGutter.appendChild(editorGutterNumber);
+        editorSuperRow.appendChild(editorGutter);
         const editorRow = document.createElement('div');
         editorRow.className = 'editor-row';
-        lineElements.push({
-            gutter: gutterContainer,
-            number: gutterLabel,
-            row: editorRow,
-            index: index
-        });
         if (lineText.length === 0) {
             editorRow.innerHTML = '&nbsp;';
         }
         else {
-            const parts = tokenMatch(tokenTree, lineText);
+            const parts = tokenMatch(editor.tokenTree, lineText);
             parts.forEach(part => {
                 if (part.isToken) {
                     const span = document.createElement('span');
@@ -45,7 +38,15 @@ export const rowEngine = (editor, text, tokenTree, gutterCon, rowCon) => {
                 }
             });
         }
-        rowCon.appendChild(editorRow);
+        editorSuperRow.appendChild(editorRow);
+        editor.editorAutoHeightContainer.appendChild(editorSuperRow);
+        lineElements.push({
+            gutter: editorGutter,
+            number: editorGutterNumber,
+            row: editorRow,
+            index,
+            gutterWidth: editorGutter.getBoundingClientRect().width
+        });
     });
     const applyHighlight = () => {
         const textArea = editor.editorTrueTextarea;
@@ -57,6 +58,8 @@ export const rowEngine = (editor, text, tokenTree, gutterCon, rowCon) => {
             lineElements.forEach((selectedRow) => {
                 const lineNum = selectedRow.index + 1;
                 const isSelected = lineNum >= startLine && lineNum <= endLine;
+                editor.editorTrueTextarea.style.paddingLeft = selectedRow.gutterWidth + 4 + "px";
+                selectedRow.gutter.style.width = selectedRow.gutterWidth;
                 const selectedColor = editor.themePreset.rowBorderSelected;
                 const transparent = "transparent";
                 if (isSelected) {
