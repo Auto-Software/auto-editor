@@ -1,5 +1,5 @@
 // MONACO THEME :
-// auto software - auto editor - (c) 2026 
+// auto software - auto editor - (c) 2026
 export const monacoTheme = {
     background: "#1e1e1e", // Fundo do editor
     textColor: "#d4d4d4",
@@ -7,6 +7,8 @@ export const monacoTheme = {
     gutterBackground: "#444444",
     gutterBackgroundSelected: "#00a156",
     gutterColorSelected: "#e7e7e7",
+    rowBackgroundSelected: "",
+    rowBorderSelected: "#3b3b3b",
     comment: "#6a9955", // Verde (Comentários)
     string: "#ce9178", // Terracota/Salmão (Strings)
     keyword: "#569cd6", // Azul (const, let, if, return)

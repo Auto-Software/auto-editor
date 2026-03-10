@@ -13,6 +13,7 @@ export declare class Editor {
     private editorBody;
     private editorWritableContainer;
     private editorViewport;
+    private editorAutoHeightContainer;
     editorRowContainer: HTMLDivElement;
     editorTrueTextarea: HTMLTextAreaElement;
     editorGutterContainer: HTMLDivElement;
@@ -23,9 +24,9 @@ export declare class Editor {
     width: string;
     height: string;
     themePreset: themeType;
-    private editorRow;
     constructor(option: EditorOption);
     private loadTheme;
+    private initScrollBar;
     private loadEditor;
 }
 export {};

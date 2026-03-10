@@ -1,10 +1,6 @@
 
 // MONACO THEME :
-// auto software - auto editor - (c) 2026 
-
-
-
-
+// auto software - auto editor - (c) 2026
 
 export const monacoTheme : themeType = {
     
@@ -15,6 +11,9 @@ export const monacoTheme : themeType = {
     gutterBackground : "#444444",
     gutterBackgroundSelected : "#00a156",
     gutterColorSelected : "#e7e7e7",
+
+    rowBackgroundSelected : "",
+    rowBorderSelected : "#3b3b3b",
 
     comment: "#6a9955",         // Verde (Comentários)
     string: "#ce9178",          // Terracota/Salmão (Strings)

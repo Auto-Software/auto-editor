@@ -1,4 +1,3 @@
-// CONSTRUCTOR : 
 import { tokenLoader } from "../token-loader/token-loader.js";
 import { closeOpen } from "../open-close/open-close.js";
 import { rowEngine } from "../row-engine/row-engine.js";
@@ -7,6 +6,7 @@ export class Editor {
     editorBody;
     editorWritableContainer;
     editorViewport;
+    editorAutoHeightContainer;
     editorRowContainer;
     editorTrueTextarea;
     editorGutterContainer;
@@ -17,13 +17,11 @@ export class Editor {
     width;
     height;
     themePreset;
-    editorRow;
     constructor(option) {
         this.container = option?.container;
         this.tabSize = option?.tabSize || 4;
         this.width = option?.width || "100%";
         this.height = option?.height || "100%";
-        this.editorRow = [];
         this.tokenTree = option?.tokenTree || tokenLoader("javascript");
         this.themePreset = option?.themePreset || themeLoader("monaco");
         this.editorBody = document.createElement("div");
@@ -39,8 +37,11 @@ export class Editor {
         this.editorTrueTextarea.spellcheck = false;
         this.editorRowContainer = document.createElement("div");
         this.editorRowContainer.classList.add("editor-row-container");
-        this.editorViewport.appendChild(this.editorTrueTextarea);
-        this.editorViewport.appendChild(this.editorRowContainer);
+        this.editorAutoHeightContainer = document.createElement("div");
+        this.editorAutoHeightContainer.classList.add("editor-auto-height-container");
+        this.editorViewport.appendChild(this.editorAutoHeightContainer);
+        this.editorAutoHeightContainer.appendChild(this.editorTrueTextarea);
+        this.editorAutoHeightContainer.appendChild(this.editorRowContainer);
         this.editorWritableContainer.appendChild(this.editorGutterContainer);
         this.editorWritableContainer.appendChild(this.editorViewport);
         this.editorBody.appendChild(this.editorWritableContainer);
@@ -69,6 +70,7 @@ export class Editor {
             this.editorBody.style.height = "100%";
         this.loadEditor(treeToLoad);
         this.loadTheme(this.themePreset);
+        this.initScrollBar(); // Ativa a sincronização
     }
     ;
     loadTheme = (theme) => {
@@ -76,19 +78,33 @@ export class Editor {
         this.editorGutterContainer.style.background = theme.background;
         this.editorBody.style.background = theme.background;
     };
+    // SINCRONIZAÇÃO DE SCROLL
+    initScrollBar = () => {
+        const viewport = this.editorViewport;
+        const gutter = this.editorGutterContainer;
+        const textarea = this.editorTrueTextarea;
+        const syncLayout = () => {
+            const { scrollTop, scrollLeft } = viewport;
+            // O Gutter acompanha o vertical
+            gutter.style.transform = `translateY(${-scrollTop}px)`;
+            // Sincroniza a posição do texto invisível no textarea para o cursor bater
+            textarea.scrollLeft = scrollLeft;
+            textarea.scrollTop = scrollTop;
+        };
+        viewport.addEventListener('scroll', syncLayout, { passive: true });
+        // Opcional: Se houver mudança dinâmica, apenas chame o sync
+        new ResizeObserver(syncLayout).observe(this.editorRowContainer);
+    };
     loadEditor = (tTree) => {
-        // TOKEN SET : 
         this.tokenTree = tTree;
         rowEngine(this, " ", this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
         this.editorTrueTextarea.addEventListener('input', () => {
             rowEngine(this, this.editorTrueTextarea.value, this.tokenTree, this.editorGutterContainer, this.editorRowContainer);
         });
-        // TAB SIZE SET : 
         let calculatedTabSize = "";
         for (let i = 0; i < this.tabSize; i++)
             calculatedTabSize += " ";
         this.editorTrueTextarea.style.tabSize = this.tabSize.toString();
-        // AUTO CLOSE CHAR : 
         this.editorTrueTextarea.addEventListener('keydown', (e) => {
             if (closeOpen(e, this))
                 return;

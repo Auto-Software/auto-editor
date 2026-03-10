@@ -24,6 +24,7 @@ export const rowEngine = (editor, text, tokenTree, gutterCon, rowCon) => {
         lineElements.push({
             gutter: gutterContainer,
             number: gutterLabel,
+            row: editorRow,
             index: index
         });
         if (lineText.length === 0) {
@@ -52,16 +53,33 @@ export const rowEngine = (editor, text, tokenTree, gutterCon, rowCon) => {
         const startLine = getLineFromPos(val, textArea.selectionStart);
         const endLine = getLineFromPos(val, textArea.selectionEnd);
         requestAnimationFrame(() => {
-            lineElements.forEach((el) => {
-                const lineNum = el.index + 1;
+            const isActuallyMultiple = startLine !== endLine;
+            lineElements.forEach((selectedRow) => {
+                const lineNum = selectedRow.index + 1;
                 const isSelected = lineNum >= startLine && lineNum <= endLine;
-                const targetBg = isSelected ? editor.themePreset.gutterBackgroundSelected : editor.themePreset.gutterBackground;
-                const targetColor = isSelected ? editor.themePreset.gutterColorSelected : editor.themePreset.gutterColor;
-                if (el.gutter.style.background !== targetBg) {
-                    el.gutter.style.background = targetBg;
+                const selectedColor = editor.themePreset.rowBorderSelected;
+                const transparent = "transparent";
+                if (isSelected) {
+                    selectedRow.gutter.style.background = editor.themePreset.gutterBackgroundSelected;
+                    selectedRow.number.style.color = editor.themePreset.gutterColorSelected;
+                    selectedRow.row.style.background = editor.themePreset.rowBackgroundSelected;
+                    const isFirst = lineNum === startLine;
+                    const isLast = lineNum === endLine;
+                    if (!isActuallyMultiple) {
+                        selectedRow.row.style.borderTopColor = selectedColor;
+                        selectedRow.row.style.borderBottomColor = selectedColor;
+                    }
+                    else {
+                        selectedRow.row.style.borderTopColor = isFirst ? selectedColor : transparent;
+                        selectedRow.row.style.borderBottomColor = isLast ? selectedColor : transparent;
+                    }
                 }
-                if (el.number.style.color !== targetColor) {
-                    el.number.style.color = targetColor;
+                else {
+                    selectedRow.gutter.style.background = editor.themePreset.gutterBackground;
+                    selectedRow.number.style.color = editor.themePreset.gutterColor;
+                    selectedRow.row.style.background = transparent;
+                    selectedRow.row.style.borderTopColor = transparent;
+                    selectedRow.row.style.borderBottomColor = transparent;
                 }
             });
         });
