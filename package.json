@@ -20,8 +20,8 @@
   "main": "dist/src/modules/editor/editor.js",
   "scripts": {
     "start": "npm-run-all -p typescript sass",
-    "typescript" : "tsc --watch",
-    "sass" : "sass --watch src/browser/scss/global.scss:./src/browser/css/global.css"
+    "typescript": "tsc --watch",
+    "sass": "sass --watch src/browser/scss/global.scss:./src/browser/css/global.css"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

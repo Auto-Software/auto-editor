@@ -18,12 +18,12 @@ interface EditorOption {
 }
 
 export class Editor {
-
-    private editorBody: HTMLDivElement;
+    
+    private self : this;
+    
+    public editorOverlay : HTMLDivElement;
+    public editorBody: HTMLDivElement;
     public editorAutoHeightContainer: HTMLDivElement;
-
-    private editorOverlay : HTMLDivElement;
-
     public editorTrueTextarea: HTMLTextAreaElement;
     public container: HTMLDivElement | HTMLBodyElement;
     public tabSize: number;
@@ -32,6 +32,7 @@ export class Editor {
     public width: string;
     public height: string;
     public themePreset: themeType;
+    public elements : any;
 
     constructor(option: EditorOption) {
 
@@ -39,6 +40,8 @@ export class Editor {
         this.tabSize = option?.tabSize || 4;
         this.width = option?.width || "100%";
         this.height = option?.height || "100%";
+        this.self = this;
+        this.elements = [];
 
         this.tokenTree = option?.tokenTree || tokenLoader("javascript");
         this.themePreset = option?.themePreset || themeLoader("monaco");
@@ -93,43 +96,35 @@ export class Editor {
         this.editorBody.style.background = theme.background;
     };
 
-    // private initScrollBar = (): void => {
-
-    //     const viewport = this.editorViewport;
-    //     const gutter = this.editorGutterContainer;
-    //     const textarea = this.editorTrueTextarea;
-
-    //     const syncLayout = () => {
-
-    //         const scrollTop = viewport.scrollTop;
-    //         const scrollLeft = viewport.scrollLeft;
-
-    //         // move o gutter junto
-    //         gutter.style.marginTop = `-${scrollTop}px`;
-
-    //         // sincroniza textarea
-    //         textarea.scrollTop = scrollTop;
-    //         textarea.scrollLeft = scrollLeft;
-    //     };
-
-    //     viewport.addEventListener("scroll", syncLayout, { passive: true });
-
-    // };
-
     private loadEditor = (tTree: tokenTreeOption[]): void => {
+    
         this.tokenTree = tTree;
 
-        rowEngine(this);
+        // 1. Configuração de Scroll: Textarea manda, Container obedece
+        this.editorTrueTextarea.style.overflow = "auto";
+        this.editorAutoHeightContainer.style.overflow = "hidden";
 
-        this.editorTrueTextarea.addEventListener('input', () => {
-            rowEngine(this);
-        });
+        // 2. Renderização Inicial
+        rowEngine(this.self);
 
-        let calculatedTabSize = "";
-        for (let i = 0; i < this.tabSize; i++) calculatedTabSize += " ";
+        // 3. SINCRONIZAÇÃO DE SCROLL (Vertical e Horizontal)
+        // Direto e instantâneo, sem processamento extra
+        this.editorTrueTextarea.onscroll = () => {
+            this.editorAutoHeightContainer.scrollTop = this.editorTrueTextarea.scrollTop;
+            this.editorAutoHeightContainer.scrollLeft = this.editorTrueTextarea.scrollLeft;
+        };
+
+        // 4. Lógica de Input e Tabulação
+        const calculatedTabSize = " ".repeat(this.tabSize);
         this.editorTrueTextarea.style.tabSize = this.tabSize.toString();
 
+        this.editorTrueTextarea.addEventListener('input', () => {
+            rowEngine(this.self);
+        });
+
+        // 5. Atalhos de Teclado (Tab e Enter)
         this.editorTrueTextarea.addEventListener('keydown', (e: KeyboardEvent) => {
+            
             if (closeOpen(e, this)) return;
 
             if (e.key === 'Tab') {
@@ -147,12 +142,31 @@ export class Editor {
                     e.preventDefault();
                     const middleContent = `\n${calculatedTabSize}\n`;
                     document.execCommand('insertText', false, middleContent);
-                    const newPos = this.editorTrueTextarea.selectionStart - 2;
+                    
+                    const newPos = this.editorTrueTextarea.selectionStart - (this.tabSize + 1);
                     this.editorTrueTextarea.setSelectionRange(newPos, newPos);
-                    rowEngine(this);
+                    
+                    rowEngine(this.self);
                     return;
-                }
+                };
+            };
+        });
+
+        // 6. Sincronização de Seleção (Destaque de linha ao clicar/mover cursor)
+        const updateSelection = () => rowEngine(this.self);
+
+        this.editorTrueTextarea.addEventListener('mousedown', () => {
+            window.addEventListener('mousemove', updateSelection);
+            window.addEventListener('mouseup', () => {
+                window.removeEventListener('mousemove', updateSelection);
+                updateSelection();
+            }, { once: true });
+        });
+
+        this.editorTrueTextarea.addEventListener('keyup', (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+                updateSelection();
             }
         });
-    }
-}
+    };
+};

@@ -10,9 +10,10 @@ interface EditorOption {
     themePreset?: themeType;
 }
 export declare class Editor {
-    private editorBody;
+    private self;
+    editorOverlay: HTMLDivElement;
+    editorBody: HTMLDivElement;
     editorAutoHeightContainer: HTMLDivElement;
-    private editorOverlay;
     editorTrueTextarea: HTMLTextAreaElement;
     container: HTMLDivElement | HTMLBodyElement;
     tabSize: number;
@@ -21,6 +22,7 @@ export declare class Editor {
     width: string;
     height: string;
     themePreset: themeType;
+    elements: any;
     constructor(option: EditorOption);
     private loadTheme;
     private loadEditor;
