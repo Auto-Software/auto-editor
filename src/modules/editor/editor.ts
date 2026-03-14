@@ -19,6 +19,7 @@ export class Editor {
     public static gutterList: Gutter[] = [];
     public static lineList: Line[] = [];
 
+    public lineCache: string[] = []; // Adicione isso
     public tabSize: number;
     public tokenTree: tokenTreeOption[];
     public width: string | number;
@@ -55,6 +56,7 @@ export class Editor {
 
         this.textarea = document.createElement("textarea");
         this.textarea.classList.add("editor-textarea");
+        this.lineCache = this.textarea.value.split('\n');
 
         this.editorContainer.appendChild(this.canvas);
         this.editorContainer.appendChild(this.textarea);
@@ -107,12 +109,15 @@ export class Editor {
         this.rendder();
 
         this.textarea.oninput = () => {
+            this.lineCache = this.textarea.value.split('\n'); // Split só aqui!
             lineGen(this.self);
             this.rendder();
         };
 
+        // No editor.ts
         this.textarea.onscroll = () => {
-            requestAnimationFrame(this.rendder);
+            lineGen(this.self); // Atualiza quais linhas devem existir
+            requestAnimationFrame(this.rendder); // Desenha
         };
 
         this.textarea.onclick = () => {

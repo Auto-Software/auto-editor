@@ -9,6 +9,7 @@ export class Editor {
     static tokenList = [];
     static gutterList = [];
     static lineList = [];
+    lineCache = []; // Adicione isso
     tabSize;
     tokenTree;
     width;
@@ -39,6 +40,7 @@ export class Editor {
         this.theme = option?.theme || themeLoader("monaco");
         this.textarea = document.createElement("textarea");
         this.textarea.classList.add("editor-textarea");
+        this.lineCache = this.textarea.value.split('\n');
         this.editorContainer.appendChild(this.canvas);
         this.editorContainer.appendChild(this.textarea);
         this.container.appendChild(this.editorContainer);
@@ -75,11 +77,14 @@ export class Editor {
         lineGen(this.self);
         this.rendder();
         this.textarea.oninput = () => {
+            this.lineCache = this.textarea.value.split('\n'); // Split só aqui!
             lineGen(this.self);
             this.rendder();
         };
+        // No editor.ts
         this.textarea.onscroll = () => {
-            requestAnimationFrame(this.rendder);
+            lineGen(this.self); // Atualiza quais linhas devem existir
+            requestAnimationFrame(this.rendder); // Desenha
         };
         this.textarea.onclick = () => {
             lineGen(this.self);

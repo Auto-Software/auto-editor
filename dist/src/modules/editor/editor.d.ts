@@ -9,6 +9,7 @@ export declare class Editor {
     static tokenList: Token[];
     static gutterList: Gutter[];
     static lineList: Line[];
+    lineCache: string[];
     tabSize: number;
     tokenTree: tokenTreeOption[];
     width: string | number;
