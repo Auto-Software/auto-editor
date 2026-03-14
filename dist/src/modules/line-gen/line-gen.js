@@ -12,7 +12,7 @@ export const lineGen = (editor) => {
     Editor.tokenList = [];
     Editor.gutterList = [];
     lines.forEach((lineText, index) => {
-        const line = new Line({
+        new Line({
             context: editor.context,
             editor: editor,
             font: editor.font,

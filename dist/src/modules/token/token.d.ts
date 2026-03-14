@@ -5,8 +5,8 @@ export declare class Token {
     private line;
     private font;
     private context;
-    private offsetX;
-    private offsetY;
+    offsetX: number;
+    offsetY: number;
     private scrollX;
     private scrollY;
     constructor(option: TokenOption);

@@ -5,7 +5,7 @@ export declare class Gutter {
     private editor;
     private context;
     private line;
-    private offsetY;
+    offsetY: number;
     private scrollY;
     constructor(option: GutterOption);
     render: () => void;

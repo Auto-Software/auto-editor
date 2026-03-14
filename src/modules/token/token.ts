@@ -12,8 +12,9 @@ export class Token {
     private font: string;
     private context: CanvasRenderingContext2D;
 
-    private offsetX: number; 
-    private offsetY: number; 
+    public offsetX: number; 
+    public offsetY: number; 
+    
     private scrollX: number;  
     private scrollY: number;  
 
@@ -37,30 +38,16 @@ export class Token {
     }
 
     public render = (): void => {
-        const metrics = this.context.measureText(this.content);
-
-        // 1. Limpa a área (Opcional, mas bom para garantir)
-        this.context.clearRect(
-            this.offsetX - this.scrollX,
-            this.offsetY - this.scrollY,
-            metrics.width,
-            this.line.lineHeight
-        );
-
-        this.context.fillStyle = this.line.editor.theme.lineBackgroundColor;
-        this.context.fillRect(
-            this.offsetX - this.scrollX,
-            this.offsetY - this.scrollY,
-            metrics.width,
-            this.line.lineHeight
-        );
-
+        // Não precisa de clearRect nem fillRect aqui, o Editor já limpou o fundo!
+        
         this.context.fillStyle = this.color;
         this.context.font = `${this.line.lineHeight - 4}px ${this.font}`;
+        
+        // Math.floor evita o borrão do sub-pixel
         this.context.fillText(
             this.content,
-            this.offsetX - this.scrollX,
-            this.offsetY - this.scrollY + (this.line.lineHeight - 4)
+            Math.floor(this.offsetX - this.scrollX),
+            Math.floor(this.offsetY - this.scrollY + (this.line.lineHeight - 4))
         );
     }
 

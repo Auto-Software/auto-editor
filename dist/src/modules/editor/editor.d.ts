@@ -5,6 +5,7 @@ export declare class Editor {
     private self;
     private canvas;
     private container;
+    private isScrolling;
     static tokenList: Token[];
     static gutterList: Gutter[];
     tabSize: number;
@@ -22,6 +23,7 @@ export declare class Editor {
     textarea: HTMLTextAreaElement;
     font: string;
     constructor(option: EditorOption);
+    private render;
     private loadEditor;
 }
 //# sourceMappingURL=editor.d.ts.map

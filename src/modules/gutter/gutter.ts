@@ -13,7 +13,8 @@ export class Gutter {
     private context: CanvasRenderingContext2D;
     private line: Line;
 
-    private offsetY: number;
+    public offsetY: number;
+    
     private scrollY: number;
 
     constructor(option: GutterOption) {

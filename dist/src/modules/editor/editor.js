@@ -6,6 +6,7 @@ export class Editor {
     self;
     canvas;
     container;
+    isScrolling = false;
     static tokenList = [];
     static gutterList = [];
     tabSize;
@@ -57,14 +58,49 @@ export class Editor {
         this.loadEditor();
     }
     ;
+    render = (context) => {
+        context.fillStyle = this.theme.background;
+        context.fillRect(0, 0, this.computedWidth, this.computedHeight);
+    };
     loadEditor = () => {
         lineGen(this.self);
-        this.textarea.oninput = () => lineGen(this.self);
+        this.render(this.context);
+        this.textarea.oninput = () => {
+            lineGen(this.self);
+            const scrollX = this.textarea.scrollLeft;
+            const scrollY = this.textarea.scrollTop;
+            this.render(this.context);
+            Editor.tokenList.forEach(token => {
+                const visualY = token.offsetY - scrollY;
+                if (visualY > -20 && visualY < this.computedHeight + 20) {
+                    token.updateScroll(scrollX, scrollY);
+                }
+            });
+            Editor.gutterList.forEach(gutter => {
+                const visualY = gutter.offsetY - scrollY;
+                if (visualY > -20 && visualY < this.computedHeight + 20) {
+                    gutter.updateScroll(scrollY);
+                }
+            });
+        };
         this.textarea.onscroll = (e) => {
             const scrollX = e.target.scrollLeft;
             const scrollY = e.target.scrollTop;
-            Editor.tokenList.forEach(token => token.updateScroll(scrollX, scrollY));
-            Editor.gutterList.forEach(gutter => gutter.updateScroll(scrollY));
+            requestAnimationFrame(() => {
+                this.render(this.context);
+                Editor.tokenList.forEach(token => {
+                    const visualY = token.offsetY - scrollY;
+                    if (visualY > -20 && visualY < this.computedHeight + 20) {
+                        token.updateScroll(scrollX, scrollY);
+                    }
+                });
+                Editor.gutterList.forEach(gutter => {
+                    const visualY = gutter.offsetY - scrollY;
+                    if (visualY > -20 && visualY < this.computedHeight + 20) {
+                        gutter.updateScroll(scrollY);
+                    }
+                });
+            });
         };
     };
 }
