@@ -6,12 +6,11 @@ export class Editor {
     self;
     canvas;
     container;
-    isScrolling = false;
     static tokenList = [];
     static gutterList = [];
+    static lineList = [];
     tabSize;
     tokenTree;
-    lang;
     width;
     height;
     theme;
@@ -29,9 +28,6 @@ export class Editor {
         this.tabSize = option?.tabSize || 4;
         this.width = option?.width || "100%";
         this.height = option?.height || "100%";
-        this.lang = option?.lang || "javascript";
-        this.computedWidth = 0;
-        this.computedHeight = 0;
         this.lineHeight = option?.lineHeight || 20;
         this.font = option?.font || "monospace";
         this.lineWidth = option?.lineWidth || 10;
@@ -50,59 +46,56 @@ export class Editor {
         this.editorContainer.style.height = this.height + "px";
         this.editorContainer.style.background = this.theme.background;
         this.textarea.style.fontFamily = this.font;
-        this.textarea.value = " ";
+        this.textarea.value = "";
         this.computedWidth = this.editorContainer.clientWidth;
         this.computedHeight = this.editorContainer.clientHeight;
         this.canvas.width = this.computedWidth;
         this.canvas.height = this.computedHeight;
         this.loadEditor();
     }
-    ;
-    render = (context) => {
-        context.fillStyle = this.theme.background;
-        context.fillRect(0, 0, this.computedWidth, this.computedHeight);
+    clearCanvas = () => {
+        this.context.fillStyle = this.theme.background;
+        this.context.fillRect(0, 0, this.computedWidth, this.computedHeight);
+    };
+    rendder = () => {
+        const scrollX = this.textarea.scrollLeft;
+        const scrollY = this.textarea.scrollTop;
+        this.clearCanvas(); // Limpa o fundo com a cor do tema
+        // CAMADA 1: Background das Linhas (Destaque)
+        Editor.lineList.forEach(line => {
+            line.updateScroll(scrollY); // Isso deve apenas atualizar o offsetY e rodar o fillRect
+        });
+        // CAMADA 2: Texto (Tokens)
+        Editor.tokenList.forEach(token => {
+            token.updateScroll(scrollX, scrollY);
+        });
+        // CAMADA 3: Interface (Gutter) - Por último para ficar por cima de tudo
+        Editor.gutterList.forEach(gutter => {
+            gutter.updateScroll(scrollY);
+        });
     };
     loadEditor = () => {
         lineGen(this.self);
-        this.render(this.context);
+        this.rendder();
         this.textarea.oninput = () => {
             lineGen(this.self);
-            const scrollX = this.textarea.scrollLeft;
-            const scrollY = this.textarea.scrollTop;
-            this.render(this.context);
-            Editor.tokenList.forEach(token => {
-                const visualY = token.offsetY - scrollY;
-                if (visualY > -20 && visualY < this.computedHeight + 20) {
-                    token.updateScroll(scrollX, scrollY);
-                }
-            });
-            Editor.gutterList.forEach(gutter => {
-                const visualY = gutter.offsetY - scrollY;
-                if (visualY > -20 && visualY < this.computedHeight + 20) {
-                    gutter.updateScroll(scrollY);
-                }
-            });
+            this.rendder();
         };
-        this.textarea.onscroll = (e) => {
-            const scrollX = e.target.scrollLeft;
-            const scrollY = e.target.scrollTop;
-            requestAnimationFrame(() => {
-                this.render(this.context);
-                Editor.tokenList.forEach(token => {
-                    const visualY = token.offsetY - scrollY;
-                    if (visualY > -20 && visualY < this.computedHeight + 20) {
-                        token.updateScroll(scrollX, scrollY);
-                    }
-                });
-                Editor.gutterList.forEach(gutter => {
-                    const visualY = gutter.offsetY - scrollY;
-                    if (visualY > -20 && visualY < this.computedHeight + 20) {
-                        gutter.updateScroll(scrollY);
-                    }
-                });
-            });
+        this.textarea.onscroll = () => {
+            requestAnimationFrame(this.rendder);
+        };
+        this.textarea.onclick = () => {
+            lineGen(this.self);
+            this.rendder();
+        };
+        this.textarea.onkeydown = (e) => {
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+                setTimeout(() => {
+                    lineGen(this.self);
+                    this.rendder();
+                }, 0);
+            }
         };
     };
 }
-;
 //# sourceMappingURL=editor.js.map

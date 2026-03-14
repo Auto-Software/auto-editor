@@ -11,8 +11,11 @@ export const lineGen = (editor) => {
     Line.lineY = 0;
     Editor.tokenList = [];
     Editor.gutterList = [];
+    Editor.lineList = [];
+    const cursorPosition = editor.textarea.selectionStart;
+    const currentLineIndex = editor.textarea.value.substring(0, cursorPosition).split('\n').length - 1;
     lines.forEach((lineText, index) => {
-        new Line({
+        const line = new Line({
             context: editor.context,
             editor: editor,
             font: editor.font,
@@ -20,6 +23,14 @@ export const lineGen = (editor) => {
             number: index,
             content: lineText
         });
+        if (index === currentLineIndex) {
+            line.selected();
+        }
+        else {
+            line.unselected();
+        }
+        line.render(); // Pinta a cor correta
+        Editor.lineList.push(line);
     });
     return lines.length;
 };

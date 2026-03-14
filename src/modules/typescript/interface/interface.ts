@@ -17,6 +17,7 @@ export interface LineOption {
     gutterWidth : number,
     number : number,
     content : string
+    color? : string
 }
 
 export interface TokenOption {

@@ -3,13 +3,14 @@
 export const monacoTheme = {
     background: "#1e1e1e", // Fundo do editor
     textColor: "#d4d4d4",
-    gutterColor: "#ececec", // Cor do gutter-label
-    gutterBackground: "#575757",
-    gutterBackgroundSelected: "#00a156",
-    gutterColorSelected: "#e7e7e7",
+    gutterFontColor: "#ececec",
+    gutterFontColorSelected: "#a86565",
+    gutterBackgroundColor: "#575757",
+    gutterBackgroundColorSelected: "#00a156",
     lineBackgroundSelected: "",
     lineBorderSelected: "#3b3b3b",
-    lineBackgroundColor: "#1f1f1f",
+    lineBackgroundColor: "#1e1e1e",
+    lineBackgroundColorSelected: "#818181",
     comment: "#6a9955", // Verde (Comentários)
     string: "#ce9178", // Terracota/Salmão (Strings)
     keyword: "#569cd6", // Azul (const, let, if, return)

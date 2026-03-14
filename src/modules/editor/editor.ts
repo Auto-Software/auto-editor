@@ -7,43 +7,39 @@ import { EditorOption, tokenTreeOption } from "../typescript/interface/interface
 import { lineGen } from "../line-gen/line-gen.js";
 import { Token } from "../token/token.js";
 import { Gutter } from "../gutter/gutter.js";
+import { Line } from "../line/line.js";
 
 export class Editor {
-    
-    private self : this;
-    private canvas : HTMLCanvasElement;
+
+    private self: this;
+    private canvas: HTMLCanvasElement;
     private container: HTMLDivElement | HTMLBodyElement;
-    private isScrolling = false;
     
-    public static tokenList : Token[] = [];
-    public static gutterList : Gutter[] = [];
+    public static tokenList: Token[] = [];
+    public static gutterList: Gutter[] = [];
+    public static lineList: Line[] = [];
 
     public tabSize: number;
     public tokenTree: tokenTreeOption[];
-    public lang: LangPresetOption;
     public width: string | number;
     public height: string | number;
-    public theme: themeType;
-    public context : CanvasRenderingContext2D;
-    public editorContainer : HTMLDivElement;
-    public computedWidth : number;
-    public computedHeight : number;
-    public lineWidth : number;
-    public lineHeight : number;
-    public textarea : HTMLTextAreaElement;
-    public font : string;
+    public theme: any;
+    public context: CanvasRenderingContext2D;
+    public editorContainer: HTMLDivElement;
+    public computedWidth: number;
+    public computedHeight: number;
+    public lineWidth: number;
+    public lineHeight: number;
+    public textarea: HTMLTextAreaElement;
+    public font: string;
 
     constructor(option: EditorOption) {
 
         this.self = this;
-
         this.container = option?.container;
         this.tabSize = option?.tabSize || 4;
         this.width = option?.width || "100%";
         this.height = option?.height || "100%";
-        this.lang = option?.lang || "javascript";
-        this.computedWidth = 0;
-        this.computedHeight = 0;
         this.lineHeight = option?.lineHeight || 20;
         this.font = option?.font || "monospace";
         this.lineWidth = option?.lineWidth || 10;
@@ -69,74 +65,71 @@ export class Editor {
         this.editorContainer.style.background = this.theme.background;
 
         this.textarea.style.fontFamily = this.font;
-        this.textarea.value = " ";
+        this.textarea.value = "";
         
-        this.computedWidth = this.editorContainer.clientWidth
-        this.computedHeight = this.editorContainer.clientHeight
+        this.computedWidth = this.editorContainer.clientWidth;
+        this.computedHeight = this.editorContainer.clientHeight;
 
         this.canvas.width = this.computedWidth;
         this.canvas.height = this.computedHeight;
 
         this.loadEditor();
-
-    };
-
-    private render = (context : CanvasRenderingContext2D ): void => {
-
-        context.fillStyle = this.theme.background;
-        context.fillRect(0,0,this.computedWidth,this.computedHeight);
     }
+
+    private clearCanvas = (): void => {
+        this.context.fillStyle = this.theme.background;
+        this.context.fillRect(0, 0, this.computedWidth, this.computedHeight);
+    }
+
+    private rendder = (): void => {
+    const scrollX = this.textarea.scrollLeft;
+    const scrollY = this.textarea.scrollTop;
+
+    this.clearCanvas(); // Limpa o fundo com a cor do tema
+
+    // CAMADA 1: Background das Linhas (Destaque)
+    Editor.lineList.forEach(line => {
+        line.updateScroll(scrollY); // Isso deve apenas atualizar o offsetY e rodar o fillRect
+    });
+
+    // CAMADA 2: Texto (Tokens)
+    Editor.tokenList.forEach(token => {
+        token.updateScroll(scrollX, scrollY);
+    });
+
+    // CAMADA 3: Interface (Gutter) - Por último para ficar por cima de tudo
+    Editor.gutterList.forEach(gutter => {
+        gutter.updateScroll(scrollY);
+    });
+}
 
     private loadEditor = (): void => {
 
         lineGen(this.self);
-        this.render(this.context);
+
+        this.rendder();
 
         this.textarea.oninput = () => {
-
             lineGen(this.self);
-
-            const scrollX = this.textarea.scrollLeft;
-            const scrollY = this.textarea.scrollTop;
-
-            this.render(this.context);
-
-            Editor.tokenList.forEach(token => {
-                const visualY = token.offsetY - scrollY;
-                if (visualY > -20 && visualY < this.computedHeight + 20) {
-                    token.updateScroll(scrollX, scrollY);
-                }
-            });
-
-            Editor.gutterList.forEach(gutter => {
-                const visualY = gutter.offsetY - scrollY;
-                if (visualY > -20 && visualY < this.computedHeight + 20) {
-                    gutter.updateScroll(scrollY);
-                }
-            });
+            this.rendder();
         };
 
-        this.textarea.onscroll = (e: any) => {
-            const scrollX = e.target.scrollLeft;
-            const scrollY = e.target.scrollTop;
+        this.textarea.onscroll = () => {
+            requestAnimationFrame(this.rendder);
+        };
 
-            requestAnimationFrame(() => {
-                this.render(this.context);
+        this.textarea.onclick = () => {
+            lineGen(this.self);
+            this.rendder();
+        };
 
-                Editor.tokenList.forEach(token => {
-                    const visualY = token.offsetY - scrollY;
-                    if (visualY > -20 && visualY < this.computedHeight + 20) {
-                        token.updateScroll(scrollX, scrollY);
-                    }
-                });
-
-                Editor.gutterList.forEach(gutter => {
-                    const visualY = gutter.offsetY - scrollY;
-                    if (visualY > -20 && visualY < this.computedHeight + 20) {
-                        gutter.updateScroll(scrollY);
-                    }
-                });
-            });
+        this.textarea.onkeydown = (e) => {
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+                setTimeout(() => {
+                    lineGen(this.self);
+                    this.rendder();
+                }, 0);
+            }
         };
     }
-};
+}

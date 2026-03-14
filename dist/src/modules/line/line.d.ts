@@ -2,20 +2,22 @@ import { Editor } from "../editor/editor.js";
 import { LineOption } from "../typescript/interface/interface.js";
 export declare class Line {
     private self;
+    private color;
     context: CanvasRenderingContext2D;
     lineHeight: number;
-    lineWidth: number;
     editor: Editor;
     offsetX: number;
-    font: string;
     gutterWidth: number;
     number: number;
     content: string;
+    offsetY: number;
+    private scrollY;
     static lineY: number;
     constructor(option: LineOption);
-    private render;
-    contentUpdate: (text: string) => void;
-    select: () => void;
-    unselect: () => void;
+    private generateChildren;
+    selected: () => void;
+    unselected: () => void;
+    render: () => void;
+    updateScroll: (scrollY: number) => void;
 }
 //# sourceMappingURL=line.d.ts.map

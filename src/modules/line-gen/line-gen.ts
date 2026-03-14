@@ -5,6 +5,7 @@ import { Editor } from "../editor/editor.js";
 import { Line } from "../line/line.js";
 
 export const lineGen = (editor: Editor): number => {
+
     const textarea = editor.textarea;
     const lines = textarea.value.split('\n');
 
@@ -15,12 +16,17 @@ export const lineGen = (editor: Editor): number => {
     textarea.style.paddingLeft = gutterWidth + 2 + "px";
 
     Line.lineY = 0; 
+    
     Editor.tokenList = [];
     Editor.gutterList = [];
+    Editor.lineList = [];
+
+    const cursorPosition = editor.textarea.selectionStart;
+    const currentLineIndex = editor.textarea.value.substring(0, cursorPosition).split('\n').length - 1;
 
     lines.forEach((lineText, index) => { 
-        
-        new Line({
+
+        const line = new Line({
             context : editor.context,
             editor : editor,
             font : editor.font,
@@ -28,7 +34,17 @@ export const lineGen = (editor: Editor): number => {
             number : index,
             content : lineText
         });
+
+        if (index === currentLineIndex) {
+            line.selected(); 
+        } else {
+            line.unselected();
+        }
+
+        line.render(); // Pinta a cor correta
+        Editor.lineList.push(line);
     });
 
     return lines.length;
 };
+

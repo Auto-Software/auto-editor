@@ -1,19 +1,19 @@
 import { EditorOption, tokenTreeOption } from "../typescript/interface/interface.js";
 import { Token } from "../token/token.js";
 import { Gutter } from "../gutter/gutter.js";
+import { Line } from "../line/line.js";
 export declare class Editor {
     private self;
     private canvas;
     private container;
-    private isScrolling;
     static tokenList: Token[];
     static gutterList: Gutter[];
+    static lineList: Line[];
     tabSize: number;
     tokenTree: tokenTreeOption[];
-    lang: LangPresetOption;
     width: string | number;
     height: string | number;
-    theme: themeType;
+    theme: any;
     context: CanvasRenderingContext2D;
     editorContainer: HTMLDivElement;
     computedWidth: number;
@@ -23,7 +23,8 @@ export declare class Editor {
     textarea: HTMLTextAreaElement;
     font: string;
     constructor(option: EditorOption);
-    private render;
+    private clearCanvas;
+    private rendder;
     private loadEditor;
 }
 //# sourceMappingURL=editor.d.ts.map

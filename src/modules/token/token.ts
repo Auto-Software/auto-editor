@@ -14,11 +14,11 @@ export class Token {
 
     public offsetX: number; 
     public offsetY: number; 
-    
     private scrollX: number;  
     private scrollY: number;  
 
     constructor(option: TokenOption) {
+        
         this.context = option.context;
         this.content = option.content;
         this.line = option.line;
