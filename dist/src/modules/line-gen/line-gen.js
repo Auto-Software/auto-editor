@@ -29,7 +29,7 @@ export const lineGen = (editor) => {
         else {
             line.unselected();
         }
-        line.render(); // Pinta a cor correta
+        line.render();
         Editor.lineList.push(line);
     });
     return lines.length;

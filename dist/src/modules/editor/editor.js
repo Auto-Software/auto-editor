@@ -60,16 +60,13 @@ export class Editor {
     rendder = () => {
         const scrollX = this.textarea.scrollLeft;
         const scrollY = this.textarea.scrollTop;
-        this.clearCanvas(); // Limpa o fundo com a cor do tema
-        // CAMADA 1: Background das Linhas (Destaque)
+        this.clearCanvas();
         Editor.lineList.forEach(line => {
-            line.updateScroll(scrollY); // Isso deve apenas atualizar o offsetY e rodar o fillRect
+            line.updateScroll(scrollY);
         });
-        // CAMADA 2: Texto (Tokens)
         Editor.tokenList.forEach(token => {
             token.updateScroll(scrollX, scrollY);
         });
-        // CAMADA 3: Interface (Gutter) - Por último para ficar por cima de tudo
         Editor.gutterList.forEach(gutter => {
             gutter.updateScroll(scrollY);
         });

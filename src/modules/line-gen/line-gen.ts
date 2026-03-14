@@ -16,7 +16,7 @@ export const lineGen = (editor: Editor): number => {
     textarea.style.paddingLeft = gutterWidth + 2 + "px";
 
     Line.lineY = 0; 
-    
+
     Editor.tokenList = [];
     Editor.gutterList = [];
     Editor.lineList = [];
@@ -41,8 +41,9 @@ export const lineGen = (editor: Editor): number => {
             line.unselected();
         }
 
-        line.render(); // Pinta a cor correta
+        line.render(); 
         Editor.lineList.push(line);
+        
     });
 
     return lines.length;
