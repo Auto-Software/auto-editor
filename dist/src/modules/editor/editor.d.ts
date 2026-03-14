@@ -1,31 +1,27 @@
-import { LangPresetOption } from "../token-loader/token-loader.js";
-import { tokenTreeOption } from "../token-match/token-match.js";
-interface EditorOption {
-    container: HTMLDivElement | HTMLBodyElement;
-    tabSize?: number;
-    tokenTree?: tokenTreeOption[];
-    langPreset?: LangPresetOption;
-    width?: string;
-    height?: string;
-    themePreset?: themeType;
-}
+import { EditorOption, tokenTreeOption } from "../typescript/interface/interface.js";
+import { Token } from "../token/token.js";
+import { Gutter } from "../gutter/gutter.js";
 export declare class Editor {
     private self;
-    editorOverlay: HTMLDivElement;
-    editorBody: HTMLDivElement;
-    editorAutoHeightContainer: HTMLDivElement;
-    editorTrueTextarea: HTMLTextAreaElement;
-    container: HTMLDivElement | HTMLBodyElement;
+    private canvas;
+    private container;
+    static tokenList: Token[];
+    static gutterList: Gutter[];
     tabSize: number;
     tokenTree: tokenTreeOption[];
-    langPreset: LangPresetOption;
-    width: string;
-    height: string;
-    themePreset: themeType;
-    elements: any;
+    lang: LangPresetOption;
+    width: string | number;
+    height: string | number;
+    theme: themeType;
+    context: CanvasRenderingContext2D;
+    editorContainer: HTMLDivElement;
+    computedWidth: number;
+    computedHeight: number;
+    lineWidth: number;
+    lineHeight: number;
+    textarea: HTMLTextAreaElement;
+    font: string;
     constructor(option: EditorOption);
-    private loadTheme;
     private loadEditor;
 }
-export {};
 //# sourceMappingURL=editor.d.ts.map

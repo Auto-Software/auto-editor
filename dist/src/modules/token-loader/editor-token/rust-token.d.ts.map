@@ -1,1 +1,1 @@
-{"version":3,"file":"rust-token.d.ts","sourceRoot":"","sources":["../../../../../src/modules/token-loader/editor-token/rust-token.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,eAAe,EAAE,MAAM,kCAAkC,CAAC;AAEnE,eAAO,MAAM,aAAa,EAAE,eAAe,EAc1C,CAAC"}
+{"version":3,"file":"rust-token.d.ts","sourceRoot":"","sources":["../../../../../src/modules/token-loader/editor-token/rust-token.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,eAAe,EAAE,MAAM,yCAAyC,CAAC;AAE1E,eAAO,MAAM,aAAa,EAAE,eAAe,EAc1C,CAAC"}

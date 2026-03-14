@@ -1,4 +1,3 @@
-// RUST LANG TOKEN TREE : 
 export const rustTokenTree = [
     { token: /\/\/.*|\/\*[\s\S]*?\*\//g, color: "#75715e" },
     { token: /b?"(\\.|[^\\"])*"|b?'.*?'|r(#*)"(.|\n)*?"\2/g, color: "#e6db74" },

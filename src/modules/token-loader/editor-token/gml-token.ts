@@ -1,7 +1,7 @@
 
 // GML ( GAME MAKER LANGUAGE ) TOKEN TREE : 
 
-import { tokenTreeOption } from "../../token-match/token-match.js";
+import { tokenTreeOption } from "../../typescript/interface/interface.js";
 
 export const gmlTokenTree: tokenTreeOption[] = [
     { token: /\/\/.*|\/\*[\s\S]*?\*\//g, color: "#75715e" },

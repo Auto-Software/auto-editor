@@ -1,5 +1,4 @@
-// auto software - auto editor - (c) 2026 
-// under MIT license 
+// TOKEN MATCH : 
 export const tokenMatch = (tokenTree, text) => {
     let parts = [{ text: text, isToken: false }];
     tokenTree.forEach(item => {

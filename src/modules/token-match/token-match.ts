@@ -1,20 +1,7 @@
-// auto software - auto editor - (c) 2026 
-// under MIT license 
 
-export type TokenRole = "own" | "ownleft" | "ownright" | "ownscope";
+// TOKEN MATCH : 
 
-export interface tokenTreeOption {
-    token: (string[] | string | RegExp);
-    color: string;
-    replace?: string; 
-    role?: TokenRole; 
-}
-
-export interface TokenPart {
-    text: string;
-    isToken: boolean;
-    color?: string;
-}
+import { TokenPart, tokenTreeOption } from "../typescript/interface/interface.js";
 
 export const tokenMatch = (tokenTree: tokenTreeOption[], text: string): TokenPart[] => {
     let parts: TokenPart[] = [{ text: text, isToken: false }];

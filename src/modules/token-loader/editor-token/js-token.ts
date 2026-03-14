@@ -1,7 +1,8 @@
 
 // JAVASCRIPT LANG TOKEN TREE : 
 
-import { tokenTreeOption } from "../../token-match/token-match.js";
+import { tokenTreeOption } from "../../typescript/interface/interface.js";
+
 
 export const javascriptTokenTree: tokenTreeOption[] = [
     { token: "//", color: "#75715e", role: "ownright" },

@@ -1,3 +1,3 @@
-import { tokenTreeOption } from "../../token-match/token-match.js";
+import { tokenTreeOption } from "../../typescript/interface/interface.js";
 export declare const rustTokenTree: tokenTreeOption[];
 //# sourceMappingURL=rust-token.d.ts.map
