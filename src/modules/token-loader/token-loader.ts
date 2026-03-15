@@ -6,12 +6,18 @@ import { gmlTokenTree } from "./editor-token/gml-token.js";
 import { javascriptTokenTree } from "./editor-token/js-token.js";
 import { rustTokenTree } from "./editor-token/rust-token.js";
 
-export const tokenLoader = (preset : LangPresetOption): tokenTreeOption[] => {
+export const tokenLoader = (preset: LangPresetOption | tokenTreeOption[]): tokenTreeOption[] => {
 
-    if(preset === "javascript") return javascriptTokenTree;
-    if(preset === "rust") return rustTokenTree;
-    if(preset === "gml") return gmlTokenTree;
+    if (Array.isArray(preset))  return preset;
 
-    return javascriptTokenTree;
-
+    switch (preset) {
+        case "javascript":
+            return javascriptTokenTree;
+        case "rust":
+            return rustTokenTree;
+        case "gml":
+            return gmlTokenTree;
+        default:
+            return javascriptTokenTree;
+    }
 };

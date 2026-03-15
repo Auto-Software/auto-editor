@@ -3,12 +3,11 @@ export declare class Token {
     private color;
     private content;
     private line;
-    private font;
     private context;
-    offsetX: number;
-    offsetY: number;
     private scrollX;
     private scrollY;
+    offsetX: number;
+    offsetY: number;
     constructor(option: TokenOption);
     render: () => void;
     updateScroll: (scrollX: number, scrollY: number) => void;

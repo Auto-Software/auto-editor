@@ -8,20 +8,22 @@ import { lineGen } from "../line-gen/line-gen.js";
 import { Token } from "../token/token.js";
 import { Gutter } from "../gutter/gutter.js";
 import { Line } from "../line/line.js";
+import { settings } from "../settings/settings.js";
 
 export class Editor {
 
     private self: this;
     private canvas: HTMLCanvasElement;
     private container: HTMLDivElement | HTMLBodyElement;
+    private pre : string;
     
     public static tokenList: Token[] = [];
     public static gutterList: Gutter[] = [];
     public static lineList: Line[] = [];
 
-    public lineCache: string[] = []; // Adicione isso
+    public lineCache: string[] = [];
     public tabSize: number;
-    public tokenTree: tokenTreeOption[];
+    public lang: tokenTreeOption[];
     public width: string | number;
     public height: string | number;
     public theme: any;
@@ -29,21 +31,24 @@ export class Editor {
     public editorContainer: HTMLDivElement;
     public computedWidth: number;
     public computedHeight: number;
-    public lineWidth: number;
+    public wordSpacing: number;
     public lineHeight: number;
     public textarea: HTMLTextAreaElement;
     public font: string;
+    public fontSize : number;
 
     constructor(option: EditorOption) {
 
         this.self = this;
         this.container = option?.container;
-        this.tabSize = option?.tabSize || 4;
-        this.width = option?.width || "100%";
-        this.height = option?.height || "100%";
-        this.lineHeight = option?.lineHeight || 20;
-        this.font = option?.font || "monospace";
-        this.lineWidth = option?.lineWidth || 10;
+        this.tabSize = option?.tabSize || settings.defaultEditorTabSize ;
+        this.width = option?.width || settings.defaultEditorWidth;
+        this.height = option?.height || settings.defaultEditorHeight;
+        this.lineHeight = option?.lineHeight || settings.defaultEditorLineHeight;
+        this.font = option?.font || settings.defaultEditorFont;
+        this.wordSpacing = option?.wordSpacing || settings.defaultEditorWordSpacing;
+        this.fontSize = option?.fontSize || settings.defaultEditorFontSize;
+        this.pre = option?.pre || " ";
 
         this.editorContainer = document.createElement("div");
         this.editorContainer.classList.add("editor-container");
@@ -51,13 +56,14 @@ export class Editor {
         this.canvas = document.createElement("canvas");
         this.context = this.canvas.getContext("2d")!;
 
-        this.tokenTree = option?.tokenTree || tokenLoader("javascript");
-        this.theme = option?.theme || themeLoader("monaco");
+        console.log("current lang : " + option?.lang);
+
+        this.lang = tokenLoader(option?.lang ?? settings.defaultEditorLang);
+        this.theme = themeLoader(option?.theme ?? settings.defaultEditorTheme);
 
         this.textarea = document.createElement("textarea");
         this.textarea.classList.add("editor-textarea");
-        this.lineCache = this.textarea.value.split('\n');
-
+        
         this.editorContainer.appendChild(this.canvas);
         this.editorContainer.appendChild(this.textarea);
         this.container.appendChild(this.editorContainer);
@@ -65,9 +71,13 @@ export class Editor {
         this.editorContainer.style.width = this.width + "px";
         this.editorContainer.style.height = this.height + "px";
         this.editorContainer.style.background = this.theme.background;
-
+        
         this.textarea.style.fontFamily = this.font;
-        this.textarea.value = "";
+        this.textarea.style.fontSize = this.fontSize + "px";
+        this.textarea.style.wordSpacing = this.wordSpacing + "px";
+        this.textarea.value = this.pre;
+
+        this.lineCache = this.textarea.value.split('\n');
         
         this.computedWidth = this.editorContainer.clientWidth;
         this.computedHeight = this.editorContainer.clientHeight;
@@ -84,6 +94,7 @@ export class Editor {
     }
 
     private rendder = (): void => {
+
         const scrollX = this.textarea.scrollLeft;
         const scrollY = this.textarea.scrollTop;
 
@@ -109,11 +120,12 @@ export class Editor {
         this.rendder();
 
         this.textarea.oninput = () => {
-            this.lineCache = this.textarea.value.split('\n'); // Split só aqui!
+            this.lineCache = this.textarea.value.split('\n');
             lineGen(this.self);
             this.rendder();
         };
-
+        
+        this.lineCache = this.textarea.value.split('\n'); // Split só aqui!
         // No editor.ts
         this.textarea.onscroll = () => {
             lineGen(this.self); // Atualiza quais linhas devem existir

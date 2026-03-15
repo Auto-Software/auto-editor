@@ -1,7 +1,9 @@
+// LINE : 
 import { Editor } from "../editor/editor.js";
 import { Token } from "../token/token.js";
 import { Gutter } from "../gutter/gutter.js";
 import { tokenMatch } from "../token-match/token-match.js";
+import { tokenLoader } from "../token-loader/token-loader.js";
 export class Line {
     self;
     color;
@@ -25,12 +27,11 @@ export class Line {
         this.content = option.content;
         this.color = this.editor.theme.lineBackgroundColor;
         this.offsetY = Line.lineY;
-        // CRUCIAL: Gerar os filhos apenas UMA VEZ no constructor
         this.generateChildren();
         Line.lineY += this.editor.lineHeight;
     }
+    ;
     generateChildren = () => {
-        // Cria o Gutter uma única vez
         const gutter = new Gutter({
             context: this.context,
             number: this.number,
@@ -39,15 +40,13 @@ export class Line {
             gutterWidth: this.gutterWidth
         });
         Editor.gutterList.push(gutter);
-        // Cria os Tokens uma única vez
-        const tokenParts = tokenMatch(this.editor.tokenTree, this.content);
-        tokenParts.forEach((part) => {
+        const tokenList = tokenMatch(tokenLoader(this.editor.lang), this.content);
+        tokenList.forEach((part) => {
             const token = new Token({
                 content: part.text,
                 context: this.context,
                 line: this.self,
-                color: part.color || "#fff",
-                font: this.editor.font
+                color: part.color || "#fff"
             });
             Editor.tokenList.push(token);
         });
@@ -59,9 +58,7 @@ export class Line {
         this.color = this.editor.theme.lineBackgroundColor;
     };
     render = () => {
-        // Limpa o offsetX para que o próximo ciclo de tokens saiba onde começar
         this.offsetX = 0;
-        // Pinta apenas o fundo da linha
         this.context.fillStyle = this.color;
         this.context.fillRect(0, this.offsetY - this.scrollY, this.editor.computedWidth, this.lineHeight);
     };

@@ -6,12 +6,13 @@ export declare class Editor {
     private self;
     private canvas;
     private container;
+    private pre;
     static tokenList: Token[];
     static gutterList: Gutter[];
     static lineList: Line[];
     lineCache: string[];
     tabSize: number;
-    tokenTree: tokenTreeOption[];
+    lang: tokenTreeOption[];
     width: string | number;
     height: string | number;
     theme: any;
@@ -19,10 +20,11 @@ export declare class Editor {
     editorContainer: HTMLDivElement;
     computedWidth: number;
     computedHeight: number;
-    lineWidth: number;
+    wordSpacing: number;
     lineHeight: number;
     textarea: HTMLTextAreaElement;
     font: string;
+    fontSize: number;
     constructor(option: EditorOption);
     private clearCanvas;
     private rendder;

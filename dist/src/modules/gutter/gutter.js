@@ -32,9 +32,10 @@ export class Gutter {
         this.context.fillStyle = this.backgroundColor;
         this.context.fillRect(0, visualY, this.gutterWidth, this.line.lineHeight);
         this.context.fillStyle = this.fontColor;
-        this.context.font = `${this.line.lineHeight - 4}px ${this.editor.font}`;
-        const baseline = visualY + (this.line.lineHeight / 2) + ((this.line.lineHeight - 4) / 2) - 2;
-        const paddingX = 4;
+        this.context.font = `${this.editor.fontSize}px ${this.editor.font}`;
+        const textMetrics = this.context.measureText(this.number.toString());
+        const baseline = visualY + this.line.lineHeight / 2 + textMetrics.actualBoundingBoxAscent / 2 - textMetrics.actualBoundingBoxDescent / 2;
+        const paddingX = (this.gutterWidth / 2) - (textMetrics.width / 2);
         this.context.fillText(this.number.toString(), paddingX, baseline);
     };
     updateScroll = (scrollY) => {
