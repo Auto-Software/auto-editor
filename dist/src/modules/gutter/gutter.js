@@ -1,3 +1,4 @@
+// GUTTER : 
 export class Gutter {
     number;
     gutterWidth;
@@ -18,6 +19,8 @@ export class Gutter {
         this.fontColor = this.editor.theme.gutterFontColor;
         this.offsetY = this.line.offsetY;
         this.render();
+        this.line.event.on("selected", this.selected);
+        this.line.event.on("unselected", this.unselected);
     }
     selected = () => {
         this.backgroundColor = this.editor.theme.gutterBackgroundColorSelected;

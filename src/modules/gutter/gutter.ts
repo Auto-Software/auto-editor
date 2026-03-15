@@ -1,3 +1,6 @@
+
+// GUTTER : 
+
 import { Editor } from "../editor/editor.js";
 import { Line } from "../line/line.js";
 import { GutterOption } from "../typescript/interface/interface.js";
@@ -31,20 +34,24 @@ export class Gutter {
         this.offsetY = this.line.offsetY; 
 
         this.render();
+
+        this.line.event.on("selected",this.selected);
+        this.line.event.on("unselected",this.unselected);
+
     }
 
-    public selected = (): void => {
+    private selected = (): void => {
         this.backgroundColor = this.editor.theme.gutterBackgroundColorSelected;
         this.fontColor = this.editor.theme.gutterFontColorSelected;
     }
 
-    public unselected = (): void => {
+    private unselected = (): void => {
         this.backgroundColor = this.editor.theme.gutterBackgroundColor;
         this.fontColor = this.editor.theme.gutterFontColor;
     }
 
-    public render = (): void => {
-        
+    private render = (): void => {
+
         const visualY = this.offsetY - this.scrollY;
 
         this.context.fillStyle = this.backgroundColor;

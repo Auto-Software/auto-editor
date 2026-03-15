@@ -1,8 +1,11 @@
 import { Editor } from "../editor/editor.js";
 import { LineOption } from "../typescript/interface/interface.js";
+import { EventTrigger } from "../event-trigger/event-trigger.js";
 export declare class Line {
     private self;
     private color;
+    private scrollY;
+    private borderColor;
     context: CanvasRenderingContext2D;
     lineHeight: number;
     editor: Editor;
@@ -11,7 +14,7 @@ export declare class Line {
     number: number;
     content: string;
     offsetY: number;
-    private scrollY;
+    event: EventTrigger;
     static lineY: number;
     constructor(option: LineOption);
     private generateChildren;

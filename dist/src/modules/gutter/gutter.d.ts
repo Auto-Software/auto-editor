@@ -10,9 +10,9 @@ export declare class Gutter {
     offsetY: number;
     private scrollY;
     constructor(option: GutterOption);
-    selected: () => void;
-    unselected: () => void;
-    render: () => void;
+    private selected;
+    private unselected;
+    private render;
     updateScroll: (scrollY: number) => void;
 }
 //# sourceMappingURL=gutter.d.ts.map

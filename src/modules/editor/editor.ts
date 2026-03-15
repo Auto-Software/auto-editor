@@ -133,8 +133,10 @@ export class Editor {
         };
 
         this.textarea.onclick = () => {
-            lineGen(this.self);
-            this.rendder();
+            setTimeout(() => {
+                lineGen(this.self);
+                this.rendder();
+            }, 0);
         };
 
         this.textarea.onkeydown = (e) => {

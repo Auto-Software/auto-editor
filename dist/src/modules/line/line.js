@@ -4,9 +4,12 @@ import { Token } from "../token/token.js";
 import { Gutter } from "../gutter/gutter.js";
 import { tokenMatch } from "../token-match/token-match.js";
 import { tokenLoader } from "../token-loader/token-loader.js";
+import { EventTrigger } from "../event-trigger/event-trigger.js";
 export class Line {
     self;
     color;
+    scrollY = 0;
+    borderColor;
     context;
     lineHeight;
     editor;
@@ -15,7 +18,7 @@ export class Line {
     number;
     content;
     offsetY;
-    scrollY = 0;
+    event;
     static lineY = 0;
     constructor(option) {
         this.self = this;
@@ -27,6 +30,8 @@ export class Line {
         this.content = option.content;
         this.color = this.editor.theme.lineBackgroundColor;
         this.offsetY = Line.lineY;
+        this.event = new EventTrigger();
+        this.borderColor = this.editor.theme.lineBorderColor;
         this.generateChildren();
         Line.lineY += this.editor.lineHeight;
     }
@@ -53,14 +58,31 @@ export class Line {
     };
     selected = () => {
         this.color = this.editor.theme.lineBackgroundColorSelected;
+        this.borderColor = this.editor.theme.lineBorderColorSelected;
+        this.event.emit("selected");
     };
     unselected = () => {
         this.color = this.editor.theme.lineBackgroundColor;
+        this.borderColor = this.editor.theme.lineBorderColor;
+        this.event.emit("unselected");
     };
     render = () => {
-        this.offsetX = 0;
+        const y = this.offsetY - this.scrollY;
+        const width = this.editor.computedWidth;
+        // Fundo da linha
         this.context.fillStyle = this.color;
-        this.context.fillRect(0, this.offsetY - this.scrollY, this.editor.computedWidth, this.lineHeight);
+        this.context.fillRect(0, y, width, this.lineHeight);
+        // Bordas superior e inferior
+        this.context.strokeStyle = this.borderColor;
+        this.context.lineWidth = 1;
+        this.context.beginPath();
+        // Linha superior
+        this.context.moveTo(0, y + 0.5); // 0.5 para alinhar com pixel perfeito
+        this.context.lineTo(width, y + 0.5);
+        // Linha inferior
+        this.context.moveTo(0, y + this.lineHeight - 0.5);
+        this.context.lineTo(width, y + this.lineHeight - 0.5);
+        this.context.stroke();
     };
     updateScroll = (scrollY) => {
         this.scrollY = scrollY;

@@ -96,8 +96,10 @@ export class Editor {
             requestAnimationFrame(this.rendder); // Desenha
         };
         this.textarea.onclick = () => {
-            lineGen(this.self);
-            this.rendder();
+            setTimeout(() => {
+                lineGen(this.self);
+                this.rendder();
+            }, 0);
         };
         this.textarea.onkeydown = (e) => {
             if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {

@@ -7,11 +7,15 @@ import { Gutter } from "../gutter/gutter.js";
 import { LineOption, TokenPart } from "../typescript/interface/interface.js";
 import { tokenMatch } from "../token-match/token-match.js";
 import { tokenLoader } from "../token-loader/token-loader.js";
+import { EventTrigger } from "../event-trigger/event-trigger.js";
 
 export class Line {
 
     private self : this;
     private color : string;
+    private scrollY : number = 0;
+    private borderColor : string;
+
     public context : CanvasRenderingContext2D;
     public lineHeight : number;
     public editor : Editor;
@@ -20,7 +24,8 @@ export class Line {
     public number : number;
     public content : string;
     public offsetY : number;
-    private scrollY : number = 0;
+    public event : EventTrigger;
+
     public static lineY : number = 0;
 
     constructor(option : LineOption){
@@ -34,10 +39,13 @@ export class Line {
         this.content = option.content;
         this.color = this.editor.theme.lineBackgroundColor;
         this.offsetY = Line.lineY;
+        this.event = new EventTrigger();
+        this.borderColor = this.editor.theme.lineBorderColor;
         
         this.generateChildren();
         
         Line.lineY += this.editor.lineHeight;
+
     };
 
     private generateChildren = (): void => {
@@ -67,18 +75,39 @@ export class Line {
 
     public selected = (): void => {
         this.color = this.editor.theme.lineBackgroundColorSelected;
+        this.borderColor = this.editor.theme.lineBorderColorSelected;
+        this.event.emit("selected");
     }
 
     public unselected = (): void => {
         this.color = this.editor.theme.lineBackgroundColor;
+        this.borderColor = this.editor.theme.lineBorderColor;
+        this.event.emit("unselected");
     }
 
     public render = (): void => {
+        
+        const y = this.offsetY - this.scrollY;
+        const width = this.editor.computedWidth;
 
-        this.offsetX = 0;
-
+        // Fundo da linha
         this.context.fillStyle = this.color;
-        this.context.fillRect(0, this.offsetY - this.scrollY, this.editor.computedWidth, this.lineHeight);
+        this.context.fillRect(0, y, width, this.lineHeight);
+
+        // Bordas superior e inferior
+        this.context.strokeStyle = this.borderColor;
+        this.context.lineWidth = 1;
+
+        this.context.beginPath();
+        // Linha superior
+        this.context.moveTo(0, y + 0.5); // 0.5 para alinhar com pixel perfeito
+        this.context.lineTo(width, y + 0.5);
+
+        // Linha inferior
+        this.context.moveTo(0, y + this.lineHeight - 0.5);
+        this.context.lineTo(width, y + this.lineHeight - 0.5);
+
+        this.context.stroke();
     };
 
     public updateScroll = (scrollY: number): void => {
