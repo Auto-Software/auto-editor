@@ -1,5 +1,5 @@
 type themeType = Record<string, string>;
-type themePresetName = "monaco" | "monokai" | "dracula";
+type themePresetName = "monaco" | "monokai" | "dracula" | "baboon";
 type TokenRole = "own" | "ownleft" | "ownright" | "ownscope";
 type LangPresetOption = "javascript" | "golang" | "cplusplus" | "csharp" | "rust" | "gml";
 //# sourceMappingURL=types.d.ts.map

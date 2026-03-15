@@ -1,7 +1,7 @@
 
 type themeType = Record<string,string>;
 
-type themePresetName = "monaco" | "monokai" | "dracula" ;
+type themePresetName = "monaco" | "monokai" | "dracula" | "baboon" ;
 
 type TokenRole = "own" | "ownleft" | "ownright" | "ownscope";
 

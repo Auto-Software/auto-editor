@@ -51,7 +51,7 @@ export class Line {
                 content: part.text,
                 context: this.context,
                 line: this.self,
-                color: part.color || "#fff"
+                color: part.color || this.editor.theme.lineFontColor
             });
             Editor.tokenList.push(token);
         });
@@ -69,17 +69,13 @@ export class Line {
     render = () => {
         const y = this.offsetY - this.scrollY;
         const width = this.editor.computedWidth;
-        // Fundo da linha
         this.context.fillStyle = this.color;
         this.context.fillRect(0, y, width, this.lineHeight);
-        // Bordas superior e inferior
         this.context.strokeStyle = this.borderColor;
         this.context.lineWidth = 1;
         this.context.beginPath();
-        // Linha superior
-        this.context.moveTo(0, y + 0.5); // 0.5 para alinhar com pixel perfeito
+        this.context.moveTo(0, y + 0.5);
         this.context.lineTo(width, y + 0.5);
-        // Linha inferior
         this.context.moveTo(0, y + this.lineHeight - 0.5);
         this.context.lineTo(width, y + this.lineHeight - 0.5);
         this.context.stroke();

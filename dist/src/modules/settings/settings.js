@@ -8,6 +8,8 @@ export const settings = {
     defaultEditorFontSize: 12,
     defaultEditorWordSpacing: 0,
     defaultEditorLang: "javascript",
-    defaultEditorTheme: "monaco"
+    defaultEditorTheme: "monaco",
+    defaultEditorFontColor: "#ffffff",
+    defaultEditorCursorColor: "#ffffff"
 };
 //# sourceMappingURL=settings.js.map

@@ -21,6 +21,7 @@ for (let i = 0; i < 3; i++) {
 const myEditor = new Editor({
     container: document.getElementById("editor-area"),
     tabSize: 4,
+    theme: "baboon",
     lang: "javascript",
     pre: template
 });

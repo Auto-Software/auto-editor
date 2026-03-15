@@ -75,6 +75,7 @@ export class Editor {
         this.textarea.style.fontFamily = this.font;
         this.textarea.style.fontSize = this.fontSize + "px";
         this.textarea.style.wordSpacing = this.wordSpacing + "px";
+        this.textarea.style.caretColor = this.theme.cursorColor ?? settings.defaultEditorCursorColor;
         this.textarea.value = this.pre;
 
         this.lineCache = this.textarea.value.split('\n');
@@ -125,11 +126,10 @@ export class Editor {
             this.rendder();
         };
         
-        this.lineCache = this.textarea.value.split('\n'); // Split só aqui!
-        // No editor.ts
+        this.lineCache = this.textarea.value.split('\n'); 
         this.textarea.onscroll = () => {
-            lineGen(this.self); // Atualiza quais linhas devem existir
-            requestAnimationFrame(this.rendder); // Desenha
+            lineGen(this.self);
+            requestAnimationFrame(this.rendder);
         };
 
         this.textarea.onclick = () => {

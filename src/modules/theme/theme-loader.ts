@@ -2,14 +2,18 @@
 // THEME LOADER : 
 // auto software - auto editor - (c) 2026 
 
+import { ThemeOption } from "../typescript/interface/interface.js";
+import { baboonTheme } from "./editor-theme/baboon-theme.js";
 import { monacoTheme } from "./editor-theme/manaco-theme.js";
 
-export const themeLoader = (theme: (themeType | themePresetName)): themeType => {
+export const themeLoader = (theme: (ThemeOption | themePresetName)): ThemeOption => {
 
     if (typeof theme === "string") {
         switch (theme) {
             case "monaco":
                 return monacoTheme;
+            case "baboon" : 
+                return baboonTheme
             default:
                 console.warn(`Tema "${theme}" não encontrado. Usando padrão.`);
             return monacoTheme;

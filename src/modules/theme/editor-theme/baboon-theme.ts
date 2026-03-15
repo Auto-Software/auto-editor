@@ -1,24 +1,25 @@
 
-// MONACO THEME :
+// BABOON THEME ( OFFICIAL THEME ) :
+
 // auto software - auto editor - (c) 2026
 
 import { ThemeOption } from "../../typescript/interface/interface.js";
 
-export const monacoTheme : ThemeOption = {
+export const baboonTheme : ThemeOption = {
     
-    background: "#1e1e1e",   
-    cursorColor : "rgb(252, 252, 252)",
+    background: "#fafafa",  
+    cursorColor : "#ED6A82",
     
-    gutterFontColor: "#e0e0e0",  
+    gutterFontColor: "#adadad",  
     gutterFontColorSelected : "#ffffff",
-    gutterBackgroundColor : "#575757",
+    gutterBackgroundColor : "#f3f3f3",
     gutterBackgroundColorSelected : "#ED6A82",
 
-    lineFontColor : "#ffffff",
-    lineBorderColor : "#1e1e1e",
-    lineBorderColorSelected : "#525252",
-    lineBackgroundColor : "#1e1e1e",
-    lineBackgroundColorSelected : "#1e1e1e",
+    lineFontColor : "#3b3b3b",
+    lineBorderColor : "#fafafa",
+    lineBorderColorSelected : "#f7f7f7",
+    lineBackgroundColor : "#fafafa",
+    lineBackgroundColorSelected : "#f7f7f7",
 
     comment: "#6a9955",         
     string: "#ce9178",          

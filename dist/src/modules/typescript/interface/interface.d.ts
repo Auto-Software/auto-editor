@@ -28,7 +28,7 @@ export interface EditorOption {
     lang?: LangPresetOption | tokenTreeOption[];
     width?: string | number;
     height?: string | number;
-    theme?: themeType;
+    theme?: ThemeOption | themePresetName;
     lineHeight?: number;
     lineWidth?: number;
     font?: string;
@@ -46,5 +46,29 @@ export interface TokenPart {
     text: string;
     isToken: boolean;
     color?: string;
+}
+export interface ThemeOption {
+    background: string;
+    cursorColor: string;
+    gutterFontColor: string;
+    gutterFontColorSelected: string;
+    gutterBackgroundColor: string;
+    gutterBackgroundColorSelected: string;
+    lineFontColor: string;
+    lineBorderColor: string;
+    lineBorderColorSelected: string;
+    lineBackgroundColor: string;
+    lineBackgroundColorSelected: string;
+    comment: string;
+    string: string;
+    keyword: string;
+    control: string;
+    number: string;
+    boolean: string;
+    method: string;
+    property: string;
+    operator: string;
+    bracket: string;
+    delimiter: string;
 }
 //# sourceMappingURL=interface.d.ts.map

@@ -10,6 +10,7 @@ export const settings : any = {
     defaultEditorFontSize : 12 as number,
     defaultEditorWordSpacing : 0 as number,
     defaultEditorLang : "javascript" as string,
-    defaultEditorTheme : "monaco" as string
-
+    defaultEditorTheme : "monaco" as string,
+    defaultEditorFontColor : "#ffffff" as string,
+    defaultEditorCursorColor : "#ffffff"
 };
