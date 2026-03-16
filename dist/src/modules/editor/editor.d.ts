@@ -27,9 +27,12 @@ export declare class Editor {
     textarea: HTMLTextAreaElement;
     font: string;
     fontSize: number;
+    scrollBarScale: number;
+    scrollBarRadius: number;
+    nativeScrollBar: boolean;
     constructor(option: EditorOption);
     private clearCanvas;
-    private rendder;
+    private render;
     private loadEditor;
 }
 //# sourceMappingURL=editor.d.ts.map

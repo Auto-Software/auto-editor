@@ -21,6 +21,10 @@ export const baboonTheme : ThemeOption = {
     lineBackgroundColor : "#fafafa",
     lineBackgroundColorSelected : "#f7f7f7",
 
+    scrollBarBackgroundColor : "transparent",
+    scrollBarThumbBackgroundColor : "#f07a8a",
+    scrollBarThumbSelectedBackgroundColor : "#dd7684",
+
     comment: "#6a9955",         
     string: "#ce9178",          
     keyword: "#569cd6",         

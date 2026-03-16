@@ -35,6 +35,9 @@ export interface EditorOption {
     fontSize?: number;
     wordSpacing?: number;
     pre?: string;
+    scrollBarScale?: number;
+    scrollBarRadius?: number;
+    nativeScrollBar?: boolean;
 }
 export interface tokenTreeOption {
     token: (string[] | string | RegExp);
@@ -59,6 +62,9 @@ export interface ThemeOption {
     lineBorderColorSelected: string;
     lineBackgroundColor: string;
     lineBackgroundColorSelected: string;
+    scrollBarBackgroundColor: string;
+    scrollBarThumbBackgroundColor: string;
+    scrollBarThumbSelectedBackgroundColor: string;
     comment: string;
     string: string;
     keyword: string;

@@ -4,6 +4,7 @@ import { themeLoader } from "../theme/theme-loader.js";
 import { lineGen } from "../line-gen/line-gen.js";
 import { settings } from "../settings/settings.js";
 import { PieceTable } from "../piece-table/piece-table.js";
+import { customScroll } from "../custom-scroll/custom-scroll.js";
 export class Editor {
     self;
     canvas;
@@ -28,17 +29,23 @@ export class Editor {
     textarea;
     font;
     fontSize;
+    scrollBarScale;
+    scrollBarRadius;
+    nativeScrollBar;
     constructor(option) {
         this.self = this;
         this.container = option?.container;
-        this.tabSize = option?.tabSize || settings.defaultEditorTabSize;
-        this.width = option?.width || settings.defaultEditorWidth;
-        this.height = option?.height || settings.defaultEditorHeight;
-        this.lineHeight = option?.lineHeight || settings.defaultEditorLineHeight;
+        this.tabSize = option?.tabSize ?? settings.defaultEditorTabSize;
+        this.width = option?.width ?? settings.defaultEditorWidth;
+        this.height = option?.height ?? settings.defaultEditorHeight;
+        this.lineHeight = option?.lineHeight ?? settings.defaultEditorLineHeight;
         this.font = option?.font || settings.defaultEditorFont;
-        this.wordSpacing = option?.wordSpacing || settings.defaultEditorWordSpacing;
-        this.fontSize = option?.fontSize || settings.defaultEditorFontSize;
+        this.wordSpacing = option?.wordSpacing ?? settings.defaultEditorWordSpacing;
+        this.fontSize = option?.fontSize ?? settings.defaultEditorFontSize;
         this.pre = option?.pre || " ";
+        this.scrollBarRadius = option?.scrollBarRadius ?? settings.defaultEditorScrollBarRadius;
+        this.scrollBarScale = option?.scrollBarScale ?? settings.defaultEditorScrollBarScale;
+        this.nativeScrollBar = option?.nativeScrollBar ?? settings.defaultEditorIsNativeScrollBar;
         this.editorContainer = document.createElement("div");
         this.editorContainer.classList.add("editor-container");
         this.canvas = document.createElement("canvas");
@@ -71,7 +78,7 @@ export class Editor {
         this.context.fillStyle = this.theme.background;
         this.context.fillRect(0, 0, this.computedWidth, this.computedHeight);
     };
-    rendder = () => {
+    render = () => {
         const scrollX = this.textarea.scrollLeft;
         const scrollY = this.textarea.scrollTop;
         this.clearCanvas();
@@ -87,29 +94,30 @@ export class Editor {
     };
     loadEditor = () => {
         lineGen(this.self);
-        this.rendder();
+        customScroll(this.self);
+        this.render();
         this.textarea.oninput = () => {
             const value = this.textarea.value;
             this.pieceTable = new PieceTable(value);
             this.lineCache = value.split('\n');
             lineGen(this.self);
-            this.rendder();
+            this.render();
         };
         this.textarea.onscroll = () => {
             lineGen(this.self);
-            requestAnimationFrame(this.rendder);
+            requestAnimationFrame(this.render);
         };
         this.textarea.onclick = () => {
             setTimeout(() => {
                 lineGen(this.self);
-                this.rendder();
+                this.render();
             }, 0);
         };
         this.textarea.onkeydown = (e) => {
             if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
                 setTimeout(() => {
                     lineGen(this.self);
-                    this.rendder();
+                    this.render();
                 }, 0);
             }
         };

@@ -12,5 +12,8 @@ export const settings : any = {
     defaultEditorLang : "javascript" as string,
     defaultEditorTheme : "monaco" as string,
     defaultEditorFontColor : "#ffffff" as string,
-    defaultEditorCursorColor : "#ffffff"
+    defaultEditorCursorColor : "#ffffff",
+    defaultEditorScrollBarRadius : 0 as number,
+    defaultEditorScrollBarScale : 10 as number,
+    defaultEditorIsNativeScrollBar : true as boolean
 };

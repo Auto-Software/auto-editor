@@ -15,7 +15,7 @@ export const lineGen = (editor: Editor): number => {
     const charWidth = 9;
     const gutterWidth = Math.max(2, currentDigits) * charWidth + 25;
 
-    textarea.style.paddingLeft = gutterWidth + 2 + "px";
+    textarea.style.width = editor.computedWidth - gutterWidth + "px";
 
     Editor.tokenList = [];
     Editor.gutterList = [];

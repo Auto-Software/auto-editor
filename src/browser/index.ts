@@ -31,5 +31,6 @@ const myEditor = new Editor({
     tabSize : 4,
     theme : "baboon",
     lang : "javascript",
-    pre : template
+    pre : template,
+    nativeScrollBar : false
 });
