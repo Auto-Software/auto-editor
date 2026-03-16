@@ -1,8 +1,9 @@
-// EDITOR : 
+// EDITOR :
 import { tokenLoader } from "../token-loader/token-loader.js";
 import { themeLoader } from "../theme/theme-loader.js";
 import { lineGen } from "../line-gen/line-gen.js";
 import { settings } from "../settings/settings.js";
+import { PieceTable } from "../piece-table/piece-table.js";
 export class Editor {
     self;
     canvas;
@@ -12,6 +13,7 @@ export class Editor {
     static gutterList = [];
     static lineList = [];
     lineCache = [];
+    pieceTable;
     tabSize;
     lang;
     width;
@@ -57,6 +59,7 @@ export class Editor {
         this.textarea.style.wordSpacing = this.wordSpacing + "px";
         this.textarea.style.caretColor = this.theme.cursorColor ?? settings.defaultEditorCursorColor;
         this.textarea.value = this.pre;
+        this.pieceTable = new PieceTable(this.textarea.value);
         this.lineCache = this.textarea.value.split('\n');
         this.computedWidth = this.editorContainer.clientWidth;
         this.computedHeight = this.editorContainer.clientHeight;
@@ -86,11 +89,12 @@ export class Editor {
         lineGen(this.self);
         this.rendder();
         this.textarea.oninput = () => {
-            this.lineCache = this.textarea.value.split('\n');
+            const value = this.textarea.value;
+            this.pieceTable = new PieceTable(value);
+            this.lineCache = value.split('\n');
             lineGen(this.self);
             this.rendder();
         };
-        this.lineCache = this.textarea.value.split('\n');
         this.textarea.onscroll = () => {
             lineGen(this.self);
             requestAnimationFrame(this.rendder);

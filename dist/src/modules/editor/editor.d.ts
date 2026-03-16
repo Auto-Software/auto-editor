@@ -2,6 +2,7 @@ import { EditorOption, tokenTreeOption } from "../typescript/interface/interface
 import { Token } from "../token/token.js";
 import { Gutter } from "../gutter/gutter.js";
 import { Line } from "../line/line.js";
+import { PieceTable } from "../piece-table/piece-table.js";
 export declare class Editor {
     private self;
     private canvas;
@@ -11,6 +12,7 @@ export declare class Editor {
     static gutterList: Gutter[];
     static lineList: Line[];
     lineCache: string[];
+    pieceTable: PieceTable;
     tabSize: number;
     lang: tokenTreeOption[];
     width: string | number;

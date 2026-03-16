@@ -1,4 +1,4 @@
-// TOKEN : 
+// TOKEN :
 import { Line } from "../line/line.js";
 export class Token {
     color;
@@ -27,9 +27,9 @@ export class Token {
     render = () => {
         this.context.fillStyle = this.color;
         this.context.font = `${this.line.editor.fontSize}px ${this.line.editor.font}`;
-        const textMetrics = this.context.measureText(this.content);
         const x = Math.floor(this.offsetX - this.scrollX);
-        const y = Math.floor(this.offsetY - this.scrollY + (this.line.lineHeight + textMetrics.actualBoundingBoxAscent - textMetrics.actualBoundingBoxDescent) / 2);
+        // baseline fixa da linha
+        const y = Math.floor(this.offsetY - this.scrollY + this.line.lineHeight * 0.75);
         this.context.fillText(this.content, x, y);
     };
     updateScroll = (scrollX, scrollY) => {

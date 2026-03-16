@@ -1,5 +1,4 @@
-
-// EDITOR : 
+// EDITOR :
 
 import { tokenLoader } from "../token-loader/token-loader.js";
 import { themeLoader } from "../theme/theme-loader.js";
@@ -9,6 +8,7 @@ import { Token } from "../token/token.js";
 import { Gutter } from "../gutter/gutter.js";
 import { Line } from "../line/line.js";
 import { settings } from "../settings/settings.js";
+import { PieceTable } from "../piece-table/piece-table.js";
 
 export class Editor {
 
@@ -16,12 +16,14 @@ export class Editor {
     private canvas: HTMLCanvasElement;
     private container: HTMLDivElement | HTMLBodyElement;
     private pre : string;
-    
+
     public static tokenList: Token[] = [];
     public static gutterList: Gutter[] = [];
     public static lineList: Line[] = [];
 
     public lineCache: string[] = [];
+    public pieceTable: PieceTable;
+
     public tabSize: number;
     public lang: tokenTreeOption[];
     public width: string | number;
@@ -63,7 +65,7 @@ export class Editor {
 
         this.textarea = document.createElement("textarea");
         this.textarea.classList.add("editor-textarea");
-        
+
         this.editorContainer.appendChild(this.canvas);
         this.editorContainer.appendChild(this.textarea);
         this.container.appendChild(this.editorContainer);
@@ -71,15 +73,18 @@ export class Editor {
         this.editorContainer.style.width = this.width + "px";
         this.editorContainer.style.height = this.height + "px";
         this.editorContainer.style.background = this.theme.background;
-        
+
         this.textarea.style.fontFamily = this.font;
         this.textarea.style.fontSize = this.fontSize + "px";
         this.textarea.style.wordSpacing = this.wordSpacing + "px";
         this.textarea.style.caretColor = this.theme.cursorColor ?? settings.defaultEditorCursorColor;
+
         this.textarea.value = this.pre;
 
+        this.pieceTable = new PieceTable(this.textarea.value);
+
         this.lineCache = this.textarea.value.split('\n');
-        
+
         this.computedWidth = this.editorContainer.clientWidth;
         this.computedHeight = this.editorContainer.clientHeight;
 
@@ -102,7 +107,7 @@ export class Editor {
         this.clearCanvas();
 
         Editor.lineList.forEach(line => {
-            line.updateScroll(scrollY); 
+            line.updateScroll(scrollY);
         });
 
         Editor.tokenList.forEach(token => {
@@ -121,12 +126,17 @@ export class Editor {
         this.rendder();
 
         this.textarea.oninput = () => {
-            this.lineCache = this.textarea.value.split('\n');
+
+            const value = this.textarea.value;
+
+            this.pieceTable = new PieceTable(value);
+
+            this.lineCache = value.split('\n');
+
             lineGen(this.self);
             this.rendder();
         };
-        
-        this.lineCache = this.textarea.value.split('\n'); 
+
         this.textarea.onscroll = () => {
             lineGen(this.self);
             requestAnimationFrame(this.rendder);
@@ -140,12 +150,17 @@ export class Editor {
         };
 
         this.textarea.onkeydown = (e) => {
+
             if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+
                 setTimeout(() => {
                     lineGen(this.self);
                     this.rendder();
                 }, 0);
+
             }
+
         };
+
     }
 }
